@@ -1,8 +1,11 @@
 const express = require('express');
+const { exec } = require('child_process');
+
 //const { Pool } = require('pg'); // Assuming PostgreSQL for the connection pool
 
 //this library directly grabs the gcloud configuration in your machine 
-const { KubeConfig, CoreV1Api } = require('@kubernetes/client-node'); // Kubernetes client
+const k8s = require('@kubernetes/client-node');
+
 const app = express();
 app.use(express.json());
 
@@ -154,7 +157,37 @@ app.post('/assign-pod', async (req, res) => {
 
 
 async function checkAndScale() {
+    /*
+    Need before to do env vars on terminal
+    mkdir -p ~/.kube
+    export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
+    */
+    const kc = new k8s.KubeConfig();
+    kc.loadFromDefault(); 
+    //kc.clusters[0].server = 'http://172.28.210.205:16443'; //this works with k8s api, from cloud
+    const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+
+
+    const namespace = 'default';
+    let deployments = undefined;
     try {
+        deployments = await k8sApi.listNamespacedDeployment(namespace); // Replace 'default' with your namespace if needed
+    } catch (err) {
+        console.error('Error fetching deployments:', err);
+    }
+
+    deployments.body.items.forEach(deployment => {
+        console.log('Deployment Name:', deployment.metadata.name);
+    });
+    /*
+    const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+    try {
+        const podsRes = await k8sApi.listNamespacedPod('default');
+        console.log(podsRes.body);
+    } catch (err) {
+        console.error(err);
+    }*/
+    /*try {
         // List all pods in the namespace
         const pods = await k8sCoreApi.listNamespacedPod(namespace);
 
@@ -183,10 +216,12 @@ async function checkAndScale() {
     } catch (err) {
         console.error('Error checking and scaling deployment:', err);
         return false;
-    }
+    }*/
+   console.log('-------------------')
 }
 
 //setInterval(checkAndScale, 60000);
+setInterval(checkAndScale, 5000);
 
 app.listen(5045, () => {
     console.log('Server is running on port 5045');

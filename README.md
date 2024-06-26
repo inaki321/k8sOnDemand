@@ -15,6 +15,12 @@ sudo chown -R <user>:<user> /home/<user>/.kube
 # add custom hostname for my localhost (optionaly)
 sudo nano /etc/hosts
 ## add 127.0.0.1 mycustomdomain.local
+
+## check microk8s config 
+microk8s config
+#should show 
+server: https://172.28.210.205:16443
+clusters etc.
 ```
 
 ## app 
@@ -62,10 +68,12 @@ Service yaml exposes to 30000
 
 Eg.  `curl http://172.28.210.205:30000/login/user/engineer`
 
+## orchestrator 
 
+need to setup k8s config for kubernetes library to work as expected 
 
-
-
-
-
-
+```
+#create kube dir to fetch using kubernetes/client-node library (only for orchestrator )
+mkdir -p ~/.kube
+export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
+```
