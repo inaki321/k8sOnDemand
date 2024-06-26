@@ -18,7 +18,7 @@ sudo nano /etc/hosts
 ```
 
 ## app 
-- main server 
+- main server, all the calls from front end should go here
 
 ### in /app/
 - Need to create docker image, and push it to my local docker, 

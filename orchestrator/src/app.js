@@ -6,6 +6,10 @@ const { KubeConfig, CoreV1Api } = require('@kubernetes/client-node'); // Kuberne
 const app = express();
 app.use(express.json());
 
+app.use(express.json({
+    limit: '250mb',
+}));
+
 /*const pool = new Pool({
     user: 'test-user',
     host: 'localhost',
@@ -111,7 +115,12 @@ function podIsReady(pod) {
 
 
 app.post('/assign-pod', async (req, res) => {
-    let dbClient;
+    console.log(req.body)
+    const group = req.body.group;
+    console.log('me llamaron ', group)
+
+
+    /*let dbClient;
     try {
         dbClient = await pool.connect();
     } catch (e) {
@@ -140,7 +149,7 @@ app.post('/assign-pod', async (req, res) => {
         if (dbClient) {
             dbClient.release();
         }
-    }
+    }*/
 });
 
 
