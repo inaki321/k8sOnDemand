@@ -13,8 +13,8 @@ microk8s enable ingress
 sudo usermod -a -G microk8s <username>
 sudo chown -R <username> ~/.kube
 
-# add custom hostname for my localhost (recommended)
-# in the deploy.sh of /k8s is included the domain add 
+# add custom hostname for my localhost (skip)
+# in the deploy.sh of /k8s folders is included the domain add 
 sudo nano /etc/hosts
 add 127.0.0.1 main-server.local --> domain for main server
 # didn't add microservices, because the ip changes in the deploy , if I want I can add 10.1.131.158 microservice-01.local
@@ -130,7 +130,10 @@ microservice-1   1/1     Running   0          3m51s   10.1.131.178   tr-2gx5vl3 
 Eg.  `curl 10.1.131.177:5983/groupServer`
 
 ## orchestrator 
-need to setup k8s config in the terminal for kubernetes library to work as expected 
+
+Need microservices to be running first 
+
+Need to setup k8s config in the terminal for kubernetes library to work as expected 
 
 ```
 #create kube dir to fetch using kubernetes/client-node library (only for orchestrator )
@@ -144,7 +147,7 @@ I can run directly the app using /orchestrator npm start and test
 ```
 import requests
 import json
-url = "localhost:5045/assign-pod"
+url = "http://orchestrator.local/assign-pod"
 payload = json.dumps({
   "group": "engineers" #use different user groups to test scalation
 })
@@ -157,16 +160,18 @@ print(response.text)
 
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/orchestrator
+    - `run bash dockerImage.sh`
+
+### in /app/k8s 
+- Run using k8s 
+- Run `bash deploy.sh` --> 
+
+    Check deploy   `microk8s kubectl get deployments`
 
     ```
-    #build, tag and push image
-    sudo docker build -t orchestrator .
-    sudo docker tag orchestrator localhost:32000/orchestrator
-    sudo docker push localhost:32000/orchestrator
-
-    #my images lives under localhost:32000
-    sudo docker ps 
-
-    #should return {"repositories":["main-server","microservice", "orchestrator"]}
-    curl http://localhost:32000/v2/_catalog
+    NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
+    orchestrator-66dbcb99b5-m4pwk   1/1     Running   0          6s    10.1.131.178   tr-2gx5vl3   <none>           <none>
     ```
+
+Eg.  `curl http://orchestrator.local/`
+Eg.  `curl 10.1.131.178:5045/`

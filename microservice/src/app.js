@@ -9,6 +9,11 @@ app.use(express.json({
 
 var microserviceGroup = undefined;
 
+app.get('/', async (req, res) => {
+    console.log('API working for microserver: ' + microserviceGroup);
+    res.status(200).send('API working for microserver: ' + microserviceGroup);
+});
+
 app.post('/initServer', async (req, res) => {
 
     console.log(req.body)

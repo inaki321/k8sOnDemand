@@ -10,6 +10,11 @@ app.use(express.json({
     limit: '250mb',
 }));
 
+app.get('/', async (req, res) => {
+    console.log('API working orchestrator.local');
+    res.status(200).send('API working orchestrator.local');
+});
+
 app.post('/assign-pod', async (req, res) => {
     const group = req.body.group;
     console.log('assign-pod called with group: ', group)
