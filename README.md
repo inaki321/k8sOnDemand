@@ -60,7 +60,7 @@ sudo docker start registry
 
 ### in /app/k8s 
 - Run using k8s 
-- Static cluster ip, to access its cluster by its http://<clusterIp>:<port>
+- Static cluster ip, to access its cluster by its `http://<clusterIp>:<port>`  we can access by CLUSTER IP
 - Run `bash deploy.sh` --> 
 
     Check deploy   `microk8s kubectl get deployments`
@@ -101,7 +101,7 @@ IMAGE NAME : localhost:32000/microservice
     To test creation of automatic replicas, uncomment # assigned: 'uncommentexampleWithAssignedPodPerGroup' and comment null assignment
 
 - Run using k8s 
-- Dynamic ips, because it replicates sometimes 
+- Dynamic ips, because it replicates sometimes, we can access by POD IP
 - Run `bash deploy.sh` --> 
 
 check deploy `microk8s kubectl get statefulsets`
@@ -159,7 +159,7 @@ IMAGE NAME : localhost:32000/orchestrator
 
 ### in /orchestrator/k8s 
 - Run using k8s 
-- Static cluster ip, to access its cluster by its http://<clusterIp>:<port>
+- Static cluster ip, to access its cluster by its `http://<clusterIp>:<port>` we can access by CLUSTER IP
 - Run `bash deploy.sh` --> 
 
     Check deploy   `microk8s kubectl get deployments`
