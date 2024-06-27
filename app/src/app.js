@@ -17,11 +17,10 @@ app.get('/', async (req, res) => {
 app.get('/login/user/:group', async (req, res) => {
     const group = req.params.group;
 
-    const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
-    const randomGroup = groups[Math.floor(Math.random() * groups.length)]
+    //const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
+    //const randomGroup = groups[Math.floor(Math.random() * groups.length)]
 
-    console.log('calling orchestrator to assign a pod ');
-    console.log(randomGroup)
+    console.log('calling orchestrator to assign a pod for group ', group);
     let podUrl = undefined;
     try {
         // if app running using npm http:localhost:5045
@@ -34,7 +33,7 @@ app.get('/login/user/:group', async (req, res) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ group: randomGroup })
+            body: JSON.stringify({ group: group })
         });
         podUrl = await res.json();
         console.log(podUrl)
