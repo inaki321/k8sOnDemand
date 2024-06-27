@@ -8,6 +8,11 @@ app.use(express.json({
 }));
 
 
+app.get('/', async (req, res) => {
+    console.log('API working main-server.local');
+    res.status(200).send('API working main-server.local');
+});
+
 //localhost:5000/login/user/engineers
 app.get('/login/user/:group', async (req, res) => {
     const group = req.params.group;

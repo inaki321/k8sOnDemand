@@ -15,3 +15,9 @@ microk8s kubectl get pods -o wide -l app=main-server
 #set localhost  in /etc/hosts for main-server-local
 sudo sed -i.bak '/main-server.local/d' /etc/hosts
 echo "127.0.0.1 main-server.local" | sudo tee -a /etc/hosts
+
+
+sleep 2
+echo "Calling service..."
+curl main-server.local
+echo " "
