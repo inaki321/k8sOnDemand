@@ -9,4 +9,5 @@ spec:
   - protocol: TCP
     port: 5045
     targetPort: 5045
+  clusterIP: 10.1.131.251
   type: ClusterIP

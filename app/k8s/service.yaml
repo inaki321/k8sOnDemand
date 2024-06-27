@@ -9,4 +9,5 @@ spec:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+  clusterIP: 10.1.131.250
   type: ClusterIP
