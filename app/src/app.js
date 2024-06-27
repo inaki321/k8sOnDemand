@@ -28,9 +28,9 @@ app.get('/login/user/:group', async (req, res) => {
         //const res = await fetch('http://orchestrator.local/assign-pod', {
         // microk8s   kubectl get svc main-server-service
         //curl my ip adress  curl 10.152.183.100:5000
-        console.log('Calling http://10.152.183.101:5000/assign-pod')
+        console.log('Calling http://10.152.183.101:5045/assign-pod')
         console.log('with params: ',JSON.stringify({ 'group': group }));
-        const res = await fetch('http://10.152.183.101:5000/assign-pod', {
+        const res = await fetch('http://10.152.183.101:5045/assign-pod', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
