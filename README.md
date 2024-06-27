@@ -87,7 +87,7 @@ Eg.  `curl 10.1.131.146:5000/login/user/engineer`
 
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/microservice
-    - `run bash dockerImage.sh`
+    - Run `bash dockerImage.sh`
 
 ### in /microservice/k8s 
 - Uses stateful state deploy, to be scalable.
@@ -103,8 +103,9 @@ check deploy `microk8s kubectl get statefulsets`
 
 
 - Access my app
-- App runs on 5000
-Each pod has its own IP
+- App runs on 5983
+Each pod has its own IP (variable, that is why I didn't added it to the etc/hosts)
+
 
 ```
 microk8s kubectl get pods -o wide
@@ -149,7 +150,7 @@ print(response.text)
 ### in /orchestrator
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/orchestrator
-    - `run bash dockerImage.sh`
+    - Run `bash dockerImage.sh`
 
 ### in /orchestrator/k8s 
 - Run using k8s 
