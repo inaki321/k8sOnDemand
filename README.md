@@ -111,7 +111,12 @@ IMAGE NAME : localhost:32000/microservice
     ```
 
 ### in /microservice/k8s 
-- Uses stateful state deploy, to be scalable. 
+- Uses stateful state deploy, to be scalable.
+
+- Assigned is null, because we are going to assing pods depending on the user group const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
+
+    To test creation of automatic replicas, uncomment # assigned: 'uncommentexampleWithAssignedPodPerGroup' and comment null assignment
+
 - Run using k8s 
 - Run `bash deploy.sh` --> 
 

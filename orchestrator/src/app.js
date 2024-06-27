@@ -1,10 +1,7 @@
-const express = require('express');
-const { exec } = require('child_process');
-
-//const { Pool } = require('pg'); // Assuming PostgreSQL for the connection pool
-
+import { assingLabeltoPod, getAvailablePods, getGroupPod, getStatefulDeployments } from './k8sfunctions.js';
 //this library directly grabs the gcloud configuration in your machine 
-const k8s = require('@kubernetes/client-node');
+import k8s from '@kubernetes/client-node';
+import express from 'express'
 
 const app = express();
 app.use(express.json());
@@ -13,146 +10,32 @@ app.use(express.json({
     limit: '250mb',
 }));
 
-/*const pool = new Pool({
-    user: 'test-user',
-    host: 'localhost',
-    database: 'available-pods-redis',
-    password: '1234567',
-    port: 5432,
-});*/
-
-async function assignAvailablePod(client, redisClient, sessionId) {
-    try {
-        //gets the pods that aren't assigned to a group
-        const availablePods = await getUnassignedPods(client);
-
-
-        //Loops trough all my available pods 
-        for (const pod of availablePods) {
-            const patch = {
-                metadata: {
-                    labels: {
-                        assignment: null,
-                        session_id: sessionId,
-                        "karpenter.sh/do-not-evict": "true"
-                    }
-                }
-            };
-
-
-
-            try {
-                //This assings to an existing pod the new url to use 
-                await axios.patch(
-                    `${client.baseUrl}/api/v1/namespaces/default/pods/${pod.metadata.name}`,
-                    patch,
-                    { headers: { 'Content-Type': 'application/merge-patch+json' } }
-                );
-
-                const podName = pod.metadata.name;
-                const podIp = pod.status.podIP;
-
-                const res = await redisClient.pipeline()
-                    .hset('assigned_pod_names', sessionId, podName)
-                    .hset('assigned_pod_ips', sessionId, podIp)
-                    .sadd('sessions', sessionId)
-                    .hget('assigned_pod_names', sessionId)
-                    .hget('assigned_pod_ips', sessionId)
-                    .exec();
-
-                const podInfo = {
-                    pod_name: res[3][1],
-                    pod_ip: res[4][1]
-                };
-
-                return podInfo;
-            } catch (err) {
-                if (err.response && err.response.status === 409) {
-                    // If there's a conflict error (HTTP status 409), it means the resource was updated in the meantime,
-                    // so we continue with the next available pod.
-                    continue;
-                } else {
-                    throw err;
-                }
-            }
-        }
-
-        throw new Error("no available pods");
-    } catch (err) {
-        throw err;
-    }
-}
-
-async function getUnassignedPods(client, runtimeConfig) {
-    const namespace = runtimeConfig.namespace;
-    if (!namespace) {
-        throw new Error("namespace not found in runtimeConfig");
-    }
-
-    const appName = runtimeConfig.app_name;
-    if (!appName) {
-        throw new Error("app_name not found in runtimeConfig");
-    }
-
-    const k8sApi = client.api.v1.namespaces(namespace).pods;
-    const labelSelector = `assignment=unassigned`;
-
-
-    //check if 
-    try {
-        const podList = await k8sApi.get({ qs: { labelSelector: labelSelector } });
-        const pods = podList.body.items.filter(p => podIsReady(p));
-        return pods;
-    } catch (err) {
-        throw new Error(`Error fetching pods: ${err.message}`);
-    }
-}
-
-function podIsReady(pod) {
-    const conditions = pod.status.conditions;
-    if (!conditions) return false;
-
-    return conditions.some(cond => cond.type === 'Ready' && cond.status === 'True');
-}
-
-
-
 app.post('/assign-pod', async (req, res) => {
-    console.log(req.body)
     const group = req.body.group;
-    console.log('me llamaron ', group)
+    console.log('assign-pod called with group: ', group)
+    const kc = new k8s.KubeConfig();
+    kc.loadFromDefault();
+    const namespace = 'default';
 
-
-    /*let dbClient;
-    try {
-        dbClient = await pool.connect();
-    } catch (e) {
-        return res.status(500).send(e.toString());
+    const groupPod = await getGroupPod(kc, namespace, group);
+    console.log(groupPod)
+    if (Object.keys(groupPod).length > 0) {
+        console.log('Group pod already assinged: ', groupPod);
+        res.status(200).send(groupPod)
+        return;
     }
 
-    const available = await checkAndScale();
+    console.log("Group doesn't haven an assigned pod ");
+    const availablePods = await getAvailablePods(kc, namespace);
+    console.log('available pods: ', availablePods);
 
-    if(!available){
-        return "No pods available to assing";
-    } 
-
-    const kc = new KubeConfig();
-    kc.loadFromDefault();
-
-    //create kubeclt client
-    //instead of doing kubeclt get pods, we get directly the client 
-    const kubeClient = kc.makeApiClient(CoreV1Api);
-
-    try {
-        const result = await assignAvailablePod(kubeClient, dbClient, req.body.session_id);
-        res.status(200).json(result);
-    } catch (e) {
-        res.status(500).send(e.toString());
-    } finally {
-        if (dbClient) {
-            dbClient.release();
-        }
-    }*/
+    const assignStatus = await assingLabeltoPod(kc, namespace, availablePods, group);
+    if (assignStatus) {
+        console.log('pod assigned ', assignStatus);
+        res.status(200).send({ succes: assignStatus });
+    } else {
+        res.status(439).send({ error: 'Error updating the pod label ' });
+    }
 });
 
 
@@ -163,12 +46,25 @@ async function checkAndScale() {
     export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
     */
     const kc = new k8s.KubeConfig();
-    kc.loadFromDefault(); 
+    kc.loadFromDefault();
     //kc.clusters[0].server = 'http://172.28.210.205:16443'; //this works with k8s api, from cloud
-    const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+    const namespace = 'default'; // Replace 'default' with your namespace if needed
 
 
-    const namespace = 'default';
+    const statefulDeployment = await getStatefulDeployments(kc, namespace);
+    if (!Object.keys(statefulDeployment).includes('microservice')) return; // return in case there is no deployment 
+    console.log(statefulDeployment)
+
+    const availablePods = await getAvailablePods(kc, namespace);
+
+    console.log(availablePods)
+    if (Object.keys(availablePods).length <= 0) {
+        console.log(' NO available pods, creating more ');
+    }
+    else {
+        console.log('There are ', Object.keys(availablePods).length, ' available pods');
+    }
+    /*const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
     let deployments = undefined;
     try {
         deployments = await k8sApi.listNamespacedDeployment(namespace); // Replace 'default' with your namespace if needed
@@ -176,11 +72,13 @@ async function checkAndScale() {
         console.error('Error fetching deployments:', err);
     }
 
-
     console.log('checking deployments: ');
     deployments.body.items.forEach(deployment => {
         console.log('Deployment Name:', deployment.metadata.name);
     });
+    console.log('---------------------------');*/
+
+
     /*
     const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
     try {
@@ -219,7 +117,7 @@ async function checkAndScale() {
         console.error('Error checking and scaling deployment:', err);
         return false;
     }*/
-   console.log('-------------------')
+    console.log('-------------------')
 }
 
 //setInterval(checkAndScale, 60000);

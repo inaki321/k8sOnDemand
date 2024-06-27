@@ -13,6 +13,7 @@ spec:
       labels:
         app: microservice
         assigned: null
+        # assigned: 'uncommentexampleWithAssignedPodPerGroup'
     spec:
       containers:
       - name: microservice-container
