@@ -9,12 +9,14 @@ microk8s enable registry
 microk8s enable ingress
 
 # set sudo permissions if microk8s doesn't have
-mkdir /home/<user>/.kube
-sudo chown -R <user>:<user> /home/<user>/.kube
+# my username: inaki99
+sudo usermod -a -G microk8s <username>
+sudo chown -R <username> ~/.kube
 
-# add custom hostname for my localhost (optionaly)
+# add custom hostname for my localhost (recommended)
 sudo nano /etc/hosts
-## add 127.0.0.1 mycustomdomain.local
+add 127.0.0.1 main-server.local --> domain for main server
+add 127.0.0.1 microservice.local --> domain for microservice 
 
 ## check microk8s config 
 microk8s config
@@ -23,8 +25,19 @@ server: https://172.28.210.205:16443
 clusters etc.
 ```
 
+Helpers
+- check my deployments (no namespace)
+
+`microk8s kubectl get deployments` or `microk8s kubectl delete deployment <deploy-name>`
+
+`microk8s kubectl get pods` or `microk8s kubectl delete pod <pod-name>`
+
+`microk8s kubectl get services` or `microk8s kubectl delete service <service-name>`
+
+------------------------------------------------------------------------------------------------------------------------------
 ## app 
 - main server, all the calls from front end should go here
+- Access by 
 
 ### in /app/
 - Need to create docker image, and push it to my local docker, 
@@ -49,24 +62,55 @@ IMAGE NAME : localhost:32000/main-server
 
 ### in /app/k8s 
 - Run using k8s 
+- Run deploy.sh --> this has the kubectl commands I need 
+
+
+- Access my app, I already added it to etc/hosts
+
+Eg.  `curl http://main-server.local/login/user/engineer`
+
+------------------------------------------------------------------------------------------------------------------------------
+
+## microservice
+### in /microservice
+
+- Need to create docker image, and push it to my local docker, 
+IMAGE NAME : localhost:32000/microservice
+
+    ```
+    # registry my port to fetch images if first time using docker
+    sudo docker run -d -p 32000:5000 --name registry registry:2
+    
+    #build, tag and push image
+    sudo docker build -t microservice .
+    sudo docker tag microservice localhost:32000/microservice
+    sudo docker push localhost:32000/microservice
+
+    #my images lives under localhost:32000
+    sudo docker ps 
+
+    #should return {"repositories":["main-server","microservice"]}
+    curl http://localhost:32000/v2/_catalog
+    ```
+
+### in /microservice/k8s 
+- Run using k8s 
 - locally uses nodePort instead of ingress 
     ```
-    sudo microk8s kubectl apply -f deployment.yaml
-    sudo microk8s kubectl apply -f service.yaml
+    microk8s kubectl apply -f deployment.yaml --> deployment of my containers
+    microk8s kubectl apply -f service.yaml --> export to 5983 
+    microk8s kubectl apply -f hpa.yaml --> autoscale, can have 10 replicas 
+    microk8s kubectl apply -f ingress.yaml --> We can access to microservice.local
     ```
 
-- check my deployments (no namespace)
-`microk8s kubectl get deployments`
-`microk8s kubectl get pods`
-`microk8s kubectl get services`
 - Access my app
 
-`microk8s kubectl get nodes -o wide`
+`microk8s kubectl get pods -o wide`
 
-Service yaml exposes to 30000
-`http://<INTERNAL-IP>:30000` 
+Service yaml exposes to 32000
+`http://<INTERNAL-IP>:32000` 
 
-Eg.  `curl http://172.28.210.205:30000/login/user/engineer`
+Eg.  `curl http://172.28.210.205:32000/login/user/engineer`
 
 ## orchestrator 
 

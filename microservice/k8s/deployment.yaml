@@ -1,0 +1,25 @@
+# Need 1 replica extra always, to assign that new pod when needed
+
+# if  assigned == null, we can assign that pod
+# if assigned != null for all pods, we need to replicate one more 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservicegroup
+spec:
+  replicas: 2 # Adjust this number as needed
+  selector:
+    matchLabels:
+      app: microservicegroup
+  template:
+    metadata:
+      labels:
+        app: microservicegroup
+        assigned: null
+    spec:
+      containers:
+      - name: microservice
+        image: localhost:32000/microservice
+        ports:
+        - containerPort: 5983

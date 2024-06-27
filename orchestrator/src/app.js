@@ -176,6 +176,8 @@ async function checkAndScale() {
         console.error('Error fetching deployments:', err);
     }
 
+
+    console.log('checking deployments: ');
     deployments.body.items.forEach(deployment => {
         console.log('Deployment Name:', deployment.metadata.name);
     });
