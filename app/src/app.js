@@ -24,7 +24,7 @@ app.get('/login/user/:group', async (req, res) => {
     let podUrl = undefined;
     try {
         // if app running using npm http:localhost:5045
-        const res = await fetch('http:127.0.0.1:5045/assign-pod', {
+        const res = await fetch('http://orchestrator.local/assign-pod', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
