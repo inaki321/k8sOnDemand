@@ -1,4 +1,4 @@
-import { assingLabeltoPod, getAvailablePods, getGroupPod, getStatefulDeployments } from './k8sfunctions.js';
+import { assingLabeltoPod, getAvailablePods, getGroupPod, getStatefulDeployments, replicateMoreServices } from './k8sfunctions.js';
 //this library directly grabs the gcloud configuration in your machine 
 import k8s from '@kubernetes/client-node';
 import express from 'express'
@@ -60,68 +60,17 @@ async function checkAndScale() {
     console.log(availablePods)
     if (Object.keys(availablePods).length <= 0) {
         console.log(' NO available pods, creating more ');
+        replicateMoreServices(kc, namespace, statefulDeployment);
     }
     else {
         console.log('There are ', Object.keys(availablePods).length, ' available pods');
     }
-    /*const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
-    let deployments = undefined;
-    try {
-        deployments = await k8sApi.listNamespacedDeployment(namespace); // Replace 'default' with your namespace if needed
-    } catch (err) {
-        console.error('Error fetching deployments:', err);
-    }
-
-    console.log('checking deployments: ');
-    deployments.body.items.forEach(deployment => {
-        console.log('Deployment Name:', deployment.metadata.name);
-    });
-    console.log('---------------------------');*/
 
 
-    /*
-    const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-    try {
-        const podsRes = await k8sApi.listNamespacedPod('default');
-        console.log(podsRes.body);
-    } catch (err) {
-        console.error(err);
-    }*/
-    /*try {
-        // List all pods in the namespace
-        const pods = await k8sCoreApi.listNamespacedPod(namespace);
-
-        // Check if there is any pod with label assignment=unassigned
-        const unassignedPods = pods.body.items.filter(pod =>
-            pod.metadata.labels && pod.metadata.labels.assignment === 'unassigned'
-        );
-
-        if (unassignedPods.length > 0) {
-            // Get the current deployment
-            const deployment = await k8sApi.readNamespacedDeployment(deploymentName, namespace);
-            const currentReplicas = deployment.body.spec.replicas;
-
-            // Scale up by 1
-            const newReplicas = currentReplicas + 1;
-            deployment.body.spec.replicas = newReplicas;
-
-            // Update the deployment
-            await k8sApi.replaceNamespacedDeployment(deploymentName, namespace, deployment.body);
-            console.log(`Scaled ${deploymentName} to ${newReplicas} replicas`);
-            return true;
-        } else {
-            console.log('No unassigned pods found');
-            return true;
-        }
-    } catch (err) {
-        console.error('Error checking and scaling deployment:', err);
-        return false;
-    }*/
     console.log('-------------------')
 }
 
-//setInterval(checkAndScale, 60000);
-setInterval(checkAndScale, 5000);
+setInterval(checkAndScale, 15000);
 
 app.listen(5045, () => {
     console.log('Server is running on port 5045');

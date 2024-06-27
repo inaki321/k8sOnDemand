@@ -148,3 +148,19 @@ need to setup k8s config for kubernetes library to work as expected
 mkdir -p ~/.kube
 export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
 ```
+
+## orchestrator 
+- Assign a pod 
+```
+import requests
+import json
+url = "localhost:5045/assign-pod"
+payload = json.dumps({
+  "group": "engineers"
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+response = requests.request("POST", url, headers=headers, data=payload)
+print(response.text)
+```

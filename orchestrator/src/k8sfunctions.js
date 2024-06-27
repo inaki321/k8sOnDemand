@@ -85,7 +85,7 @@ export const assingLabeltoPod = async (kc, namespace, availablePods, group) => {
                 value: pod.metadata.labels,
             },
         ];
-        const options = { "headers": { "Content-type": k8s.PatchUtils.PATCH_FORMAT_JSON_PATCH}};
+        const options = { "headers": { "Content-type": k8s.PatchUtils.PATCH_FORMAT_JSON_PATCH } };
 
         const podPatchRes = await k8sApi.patchNamespacedPod(
             podName,
@@ -131,4 +131,21 @@ export const getStatefulDeployments = async (kc, namespace) => {
     }
 
     return statefulService;
+}
+
+export const replicateMoreServices = async (kc, namespace, statefulDeploys) => {
+    const deployName = Object.keys(statefulDeploys)[0];
+    const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
+    const res = await k8sApi.readNamespacedStatefulSet(deployName, namespace);
+    const statefulSet = res.body;
+    let replicasCount = statefulSet.spec.replicas;
+    console.log('Replicas before: ', replicasCount)
+    replicasCount++;
+    statefulSet.spec.replicas = replicasCount;
+    try {
+        await k8sApi.replaceNamespacedStatefulSet(deployName, namespace, statefulSet);
+        console.log(`StatefulSet ${deployName} scaled to ${replicasCount} replicas`);
+    } catch (e) {
+        console.log('ERROR scaling more pods ', e);
+    }
 }
