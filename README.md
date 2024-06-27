@@ -68,17 +68,17 @@ sudo docker start registry
 - Access my app, I already added it to etc/hosts
 - App runs on 5000
 ```
-microk8s kubectl get pods -o wide
+microk8s kubectl get services -o wide
 
 NAME             READY   STATUS    RESTARTS   AGE     IP             NODE         NOMINATED NODE   READINESS GATES
-main-server-8495669c8c-99lh8   1/1     Running   0          55m     10.1.131.146   tr-2gx5vl3   <none>           <none>
+main-server            ClusterIP   10.152.183.232   <none>        5000/TCP   20h     app=main-server
+main-server-service    ClusterIP   10.152.183.100   <none>        5000/TCP   71s     app=main-server
 ```
 
-This is going to call /login/user/ and assign group engineer for a new pod, this is returning the info of that pod
-To use that pod
+This calls the clusterip, then I can call my port and service 
 
 Eg.  `curl http://main-server.local/login/user/engineer`
-Eg.  `curl 10.1.131.146:5000/login/user/engineer`
+Eg.  `curl 10.152.183.100:5000/login/user/engineer`
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -160,8 +160,10 @@ IMAGE NAME : localhost:32000/orchestrator
 
     ```
     NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
-    orchestrator-66dbcb99b5-m4pwk   1/1     Running   0          6s    10.1.131.178   tr-2gx5vl3   <none>           <none>
+    orchestrator-service   ClusterIP   10.152.183.101   <none>        5045/TCP   8m21s   app=orchestrator
     ```
 
+This calls my clusterip, the port of the app and the route
+
 Eg.  `curl http://orchestrator.local/`
-Eg.  `curl 10.1.131.178:5045/`
+Eg.  `curl 10.152.183.101:5045/`
