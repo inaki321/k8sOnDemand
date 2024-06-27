@@ -88,7 +88,7 @@ This calls the clusterip, then I can call my port and service
 Eg.  `curl http://main-server.local/login/user/engineer` This is how to call from my end
 
 Eg.  `curl 10.152.183.100:5000/login/user/engineer` This how to call between pods
-    * That is why this fetch http://10.152.183.101:5045/assign-pod IN THE POD
+    * That is why this fetch http://10.152.183.101:5045/assign-pod IN THE POD console.log('Calling http://10.152.183.101:5045/assign-pod')
 
 
 ------------------------------------------------------------------------------------------------------------------------------
