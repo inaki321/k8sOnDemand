@@ -10,7 +10,6 @@ app.use(express.json({
 
 //localhost:5000/login/user/engineers
 app.get('/login/user/:group', async (req, res) => {
-    console.log('hey ')
     const group = req.params.group;
 
     const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
@@ -19,20 +18,25 @@ app.get('/login/user/:group', async (req, res) => {
     console.log(randomGroup)
     let podUrl = undefined;
     try {
-        podUrl = await fetch('http:localhost:5045/assign-pod', {
+        // if app running using npm http:localhost:5045
+        const res = await fetch('http:127.0.0.1:5045/assign-pod', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ group: randomGroup })
         });
+        podUrl = await res.json();
+        console.log(podUrl)
     } catch (e) {
         console.log('ERROR: ' + e);
     }
 
 
-    console.log(podUrl)
-    res.status(200).send({ success: 'User with pod assinged ' });
+    res.status(200).send({
+        'success': 'User with pod assinged correctly',
+        'pod': podUrl
+    });
 });
 
 

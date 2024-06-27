@@ -14,6 +14,7 @@ sudo usermod -a -G microk8s <username>
 sudo chown -R <username> ~/.kube
 
 # add custom hostname for my localhost (recommended)
+# in the deploy.sh of /k8s is included the domain add 
 sudo nano /etc/hosts
 add 127.0.0.1 main-server.local --> domain for main server
 # didn't add microservices, because the ip changes in the deploy , if I want I can add 10.1.131.158 microservice-01.local
@@ -53,22 +54,11 @@ sudo docker start registry
 - Access by 
 
 ### in /app/
-- Need to create docker image, and push it to my local docker, 
-IMAGE NAME : localhost:32000/main-server
-    
-    my registry host is localhost:32000, *it can be the url of my docker image*
-    ```
-    #build, tag and push image
-    sudo docker build -t main-server .
-    sudo docker tag main-server localhost:32000/main-server
-    sudo docker push localhost:32000/main-server
+- Need to create docker image, and push it to my local docker
+    - IMAGE NAME : localhost:32000/main-server
+    - `run bash dockerImage.sh`
+    - my registry host is localhost:32000, *it can be the url of my docker image*
 
-    #my images lives under localhost:32000
-    sudo docker ps 
-
-    #should return {"repositories":["main-server"]}
-    curl http://localhost:32000/v2/_catalog
-    ```
 
 ### in /app/k8s 
 - Run using k8s 
@@ -140,8 +130,7 @@ microservice-1   1/1     Running   0          3m51s   10.1.131.178   tr-2gx5vl3 
 Eg.  `curl 10.1.131.177:5983/groupServer`
 
 ## orchestrator 
-
-need to setup k8s config for kubernetes library to work as expected 
+need to setup k8s config in the terminal for kubernetes library to work as expected 
 
 ```
 #create kube dir to fetch using kubernetes/client-node library (only for orchestrator )
@@ -149,14 +138,15 @@ mkdir -p ~/.kube
 export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
 ```
 
-## orchestrator 
-- Assign a pod 
+- Assigns a pod to a user group
+
+I can run directly the app using /orchestrator npm start and test 
 ```
 import requests
 import json
 url = "localhost:5045/assign-pod"
 payload = json.dumps({
-  "group": "engineers"
+  "group": "engineers" #use different user groups to test scalation
 })
 headers = {
   'Content-Type': 'application/json'
@@ -164,3 +154,19 @@ headers = {
 response = requests.request("POST", url, headers=headers, data=payload)
 print(response.text)
 ```
+
+- Need to create docker image, and push it to my local docker, 
+IMAGE NAME : localhost:32000/orchestrator
+
+    ```
+    #build, tag and push image
+    sudo docker build -t orchestrator .
+    sudo docker tag orchestrator localhost:32000/orchestrator
+    sudo docker push localhost:32000/orchestrator
+
+    #my images lives under localhost:32000
+    sudo docker ps 
+
+    #should return {"repositories":["main-server","microservice", "orchestrator"]}
+    curl http://localhost:32000/v2/_catalog
+    ```
