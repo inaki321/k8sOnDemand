@@ -16,4 +16,4 @@ spec:
       - name: main-server
         image: localhost:32000/main-server
         ports:
-        - containerPort: 5002
+        - containerPort: 5000

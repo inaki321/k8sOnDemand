@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: localhost
+  - host: main-server.local
     http:
       paths:
       - path: /
@@ -16,4 +16,3 @@ spec:
             name: main-server-service
             port:
               number: 5000
-
