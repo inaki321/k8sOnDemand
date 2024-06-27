@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { json } from 'express';
 import fetch from 'node-fetch';
 
 const app = express();
@@ -28,13 +28,18 @@ app.get('/login/user/:group', async (req, res) => {
         //const res = await fetch('http://orchestrator.local/assign-pod', {
         // microk8s   kubectl get svc main-server-service
         //curl my ip adress  curl 10.152.183.100:5000
-        const res = await fetch('http://10.152.183.100:5000/assign-pod', {
+        console.log('Calling http://10.152.183.101:5000/assign-pod')
+        console.log('with params: ',JSON.stringify({ 'group': group }));
+        const res = await fetch('http://10.152.183.101:5000/assign-pod', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ group: group })
+            body: JSON.stringify({ 'group': group })
         });
+
+        console.log('status: ',res.status)
+        console.log('text: ',res.statusText)
         podUrl = await res.json();
         console.log(podUrl)
     } catch (e) {

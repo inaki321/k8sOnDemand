@@ -10,7 +10,7 @@ microk8s kubectl apply -f ingress.yaml
 sleep 5
 
 #shows my deployment pod 
-microk8s kubectl get pods -o wide -l app=main-server
+microk8s kubectl get services -o wide 
 
 #set localhost  in /etc/hosts for main-server-local
 sudo sed -i.bak '/main-server.local/d' /etc/hosts
