@@ -54,7 +54,7 @@ sudo docker start registry
 ### in /app/
 - Need to create docker image, and push it to my local docker
     - IMAGE NAME : localhost:32000/main-server
-    - `run bash dockerImage.sh`
+    - Run `bash dockerImage.sh`
     - my registry host is localhost:32000, *it can be the url of my docker image*
 
 
