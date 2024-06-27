@@ -38,6 +38,15 @@ Helpers
 
 `microk8s kubectl get statefulsets`
 
+###  Locally need to intialize docker for fetching those images, saved in http://localhost:32000/v2/_catalog
+```
+# registry my port to fetch images if first time using docker
+sudo docker run -d -p 32000:5000 --name registry registry:2
+
+#start docker registry if already registered
+sudo docker start registry
+
+```
 ------------------------------------------------------------------------------------------------------------------------------
 ## app 
 - main server, all the calls from front end should go here
@@ -49,9 +58,6 @@ IMAGE NAME : localhost:32000/main-server
     
     my registry host is localhost:32000, *it can be the url of my docker image*
     ```
-    # registry my port to fetch images if first time using docker
-    sudo docker run -d -p 32000:5000 --name registry registry:2
-    
     #build, tag and push image
     sudo docker build -t main-server .
     sudo docker tag main-server localhost:32000/main-server
@@ -92,9 +98,6 @@ Eg.  `curl 10.1.131.146:5000/login/user/engineer`
 IMAGE NAME : localhost:32000/microservice
 
     ```
-    # registry my port to fetch images if first time using docker
-    sudo docker run -d -p 32000:5000 --name registry registry:2
-    
     #build, tag and push image
     sudo docker build -t microservice .
     sudo docker tag microservice localhost:32000/microservice
