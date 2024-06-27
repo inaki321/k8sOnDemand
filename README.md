@@ -86,19 +86,7 @@ Eg.  `curl 10.1.131.146:5000/login/user/engineer`
 
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/microservice
-
-    ```
-    #build, tag and push image
-    sudo docker build -t microservice .
-    sudo docker tag microservice localhost:32000/microservice
-    sudo docker push localhost:32000/microservice
-
-    #my images lives under localhost:32000
-    sudo docker ps 
-
-    #should return {"repositories":["main-server","microservice"]}
-    curl http://localhost:32000/v2/_catalog
-    ```
+    - `run bash dockerImage.sh`
 
 ### in /microservice/k8s 
 - Uses stateful state deploy, to be scalable.
