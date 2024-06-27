@@ -20,6 +20,7 @@ app.get('/login/user/:group', async (req, res) => {
     const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
     const randomGroup = groups[Math.floor(Math.random() * groups.length)]
 
+    console.log('calling orchestrator to assign a pod ');
     console.log(randomGroup)
     let podUrl = undefined;
     try {
@@ -37,6 +38,7 @@ app.get('/login/user/:group', async (req, res) => {
         console.log('ERROR: ' + e);
     }
 
+    console.log('podurl res: ',podUrl);
 
     res.status(200).send({
         'success': 'User with pod assinged correctly',

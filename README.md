@@ -13,8 +13,7 @@ microk8s enable ingress
 sudo usermod -a -G microk8s <username>
 sudo chown -R <username> ~/.kube
 
-# add custom hostname for my localhost (skip)
-# in the deploy.sh of /k8s folders is included the domain add 
+# add custom hostname for my localhost (Already in the deploy.sh of /k8s folders is included the domain add )
 sudo nano /etc/hosts
 add 127.0.0.1 main-server.local --> domain for main server
 # didn't add microservices, because the ip changes in the deploy , if I want I can add 10.1.131.158 microservice-01.local
@@ -51,7 +50,6 @@ sudo docker start registry
 ------------------------------------------------------------------------------------------------------------------------------
 ## app 
 - main server, all the calls from front end should go here
-- Access by 
 
 ### in /app/
 - Need to create docker image, and push it to my local docker
@@ -75,6 +73,9 @@ microk8s kubectl get pods -o wide
 NAME             READY   STATUS    RESTARTS   AGE     IP             NODE         NOMINATED NODE   READINESS GATES
 main-server-8495669c8c-99lh8   1/1     Running   0          55m     10.1.131.146   tr-2gx5vl3   <none>           <none>
 ```
+
+This is going to call /login/user/ and assign group engineer for a new pod, this is returning the info of that pod
+To use that pod
 
 Eg.  `curl http://main-server.local/login/user/engineer`
 Eg.  `curl 10.1.131.146:5000/login/user/engineer`
