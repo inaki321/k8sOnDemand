@@ -146,12 +146,12 @@ headers = {
 response = requests.request("POST", url, headers=headers, data=payload)
 print(response.text)
 ```
-
+### in /orchestrator
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/orchestrator
     - `run bash dockerImage.sh`
 
-### in /app/k8s 
+### in /orchestrator/k8s 
 - Run using k8s 
 - Run `bash deploy.sh` --> 
 
