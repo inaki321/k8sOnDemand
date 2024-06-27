@@ -16,7 +16,7 @@ sudo chown -R <username> ~/.kube
 # add custom hostname for my localhost (recommended)
 sudo nano /etc/hosts
 add 127.0.0.1 main-server.local --> domain for main server
-add 127.0.0.1 microservice.local --> domain for microservice 
+# didn't add microservices, because the ip changes in the deploy , if I want I can add 10.1.131.158 microservice-01.local
 
 ## check microk8s config 
 microk8s config
@@ -33,6 +33,10 @@ Helpers
 `microk8s kubectl get pods` or `microk8s kubectl delete pod <pod-name>`
 
 `microk8s kubectl get services` or `microk8s kubectl delete service <service-name>`
+
+`microk8s kubectl get pod <pod-name> -o jsonpath='{.metadata.ownerReferences[0].kind}'` type of pod 
+
+`microk8s kubectl get statefulsets`
 
 ------------------------------------------------------------------------------------------------------------------------------
 ## app 
@@ -62,12 +66,22 @@ IMAGE NAME : localhost:32000/main-server
 
 ### in /app/k8s 
 - Run using k8s 
-- Run deploy.sh --> this has the kubectl commands I need 
+- Run `bash deploy.sh` --> 
+
+    Check deploy   `microk8s kubectl get deployments`
 
 
 - Access my app, I already added it to etc/hosts
+- App runs on 5000
+```
+microk8s kubectl get pods -o wide
+
+NAME             READY   STATUS    RESTARTS   AGE     IP             NODE         NOMINATED NODE   READINESS GATES
+main-server-8495669c8c-99lh8   1/1     Running   0          55m     10.1.131.146   tr-2gx5vl3   <none>           <none>
+```
 
 Eg.  `curl http://main-server.local/login/user/engineer`
+Eg.  `curl 10.1.131.146:5000/login/user/engineer`
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -94,23 +108,28 @@ IMAGE NAME : localhost:32000/microservice
     ```
 
 ### in /microservice/k8s 
+- Uses stateful state deploy, to be scalable. 
 - Run using k8s 
-- locally uses nodePort instead of ingress 
-    ```
-    microk8s kubectl apply -f deployment.yaml --> deployment of my containers
-    microk8s kubectl apply -f service.yaml --> export to 5983 
-    microk8s kubectl apply -f hpa.yaml --> autoscale, can have 10 replicas 
-    microk8s kubectl apply -f ingress.yaml --> We can access to microservice.local
-    ```
+- Run `bash deploy.sh` --> 
+
+check deploy `microk8s kubectl get statefulsets`
+
 
 - Access my app
+- App runs on 5000
+Each pod has its own IP
 
-`microk8s kubectl get pods -o wide`
+```
+microk8s kubectl get pods -o wide
 
-Service yaml exposes to 32000
-`http://<INTERNAL-IP>:32000` 
+NAME             READY   STATUS    RESTARTS   AGE     IP             NODE         NOMINATED NODE   READINESS GATES
+microservice-0   1/1     Running   0          3m53s   10.1.131.177   tr-2gx5vl3   <none>           <none>
+microservice-1   1/1     Running   0          3m51s   10.1.131.178   tr-2gx5vl3   <none>           <none>
+```
 
-Eg.  `curl http://172.28.210.205:32000/login/user/engineer`
+`http://<IP>:5983` 
+
+Eg.  `curl 10.1.131.177:5983/groupServer`
 
 ## orchestrator 
 
