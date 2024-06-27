@@ -60,6 +60,7 @@ sudo docker start registry
 
 ### in /app/k8s 
 - Run using k8s 
+- Static cluster ip, to access its cluster by its http://<clusterIp>:<port>
 - Run `bash deploy.sh` --> 
 
     Check deploy   `microk8s kubectl get deployments`
@@ -77,8 +78,11 @@ main-server-service    ClusterIP   10.152.183.100   <none>        5000/TCP   71s
 
 This calls the clusterip, then I can call my port and service 
 
-Eg.  `curl http://main-server.local/login/user/engineer`
-Eg.  `curl 10.152.183.100:5000/login/user/engineer`
+Eg.  `curl http://main-server.local/login/user/engineer` This is how to call from my end
+
+Eg.  `curl 10.152.183.100:5000/login/user/engineer` This how to call between pods
+    That is why this fetch http://10.152.183.100:5000/assign-pod
+
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -97,6 +101,7 @@ IMAGE NAME : localhost:32000/microservice
     To test creation of automatic replicas, uncomment # assigned: 'uncommentexampleWithAssignedPodPerGroup' and comment null assignment
 
 - Run using k8s 
+- Dynamic ips, because it replicates sometimes 
 - Run `bash deploy.sh` --> 
 
 check deploy `microk8s kubectl get statefulsets`
@@ -154,6 +159,7 @@ IMAGE NAME : localhost:32000/orchestrator
 
 ### in /orchestrator/k8s 
 - Run using k8s 
+- Static cluster ip, to access its cluster by its http://<clusterIp>:<port>
 - Run `bash deploy.sh` --> 
 
     Check deploy   `microk8s kubectl get deployments`
@@ -165,5 +171,6 @@ IMAGE NAME : localhost:32000/orchestrator
 
 This calls my clusterip, the port of the app and the route
 
-Eg.  `curl http://orchestrator.local/`
-Eg.  `curl 10.152.183.101:5045/`
+Eg.  `curl http://orchestrator.local/` This is how to call from my end
+
+Eg.  `curl 10.152.183.101:5045/` This how to call between pods
