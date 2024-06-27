@@ -61,7 +61,7 @@ sudo docker start registry
 ### in /app/
 - Need to create docker image, and push it to my local docker
     - IMAGE NAME : localhost:32000/main-server
-    - Run `bash dockerImage.sh`
+    - Run `bash dockerImg.sh`
     - my registry host is localhost:32000, *it can be the url of my docker image*
 
 
@@ -98,7 +98,7 @@ Eg.  `curl 10.152.183.100:5000/login/user/engineer` This how to call between pod
 
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/microservice
-    - Run `bash dockerImage.sh`
+    - Run `bash dockerImg.sh`
 
 ### in /microservice/k8s 
 - Uses stateful state deploy, to be scalable.
@@ -153,7 +153,7 @@ print(response.text)
 ### in /orchestrator
 - Need to create docker image, and push it to my local docker, 
 IMAGE NAME : localhost:32000/orchestrator
-    - Run `bash dockerImage.sh`
+    - Run `bash dockerImg.sh`
 
 ### in /orchestrator/k8s 
 - Run using k8s 
