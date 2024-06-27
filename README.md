@@ -23,6 +23,13 @@ microk8s config
 #should show 
 server: https://172.28.210.205:16443
 clusters etc.
+
+
+Need to setup k8s config in the terminal for kubernetes library to work as expected 
+#create kube dir to fetch using kubernetes/client-node library (only for orchestrator )
+mkdir -p ~/.kube
+export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
+
 ```
 
 Helpers
@@ -125,16 +132,7 @@ microservice-1   1/1     Running   0          3m51s   10.1.131.178   tr-2gx5vl3 
 Eg.  `curl 10.1.131.177:5983/groupServer`
 
 ## orchestrator 
-
 Need microservices to be running first 
-
-Need to setup k8s config in the terminal for kubernetes library to work as expected 
-
-```
-#create kube dir to fetch using kubernetes/client-node library (only for orchestrator )
-mkdir -p ~/.kube
-export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
-```
 
 - Assigns a pod to a user group
 
