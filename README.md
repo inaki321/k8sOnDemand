@@ -163,6 +163,7 @@ IMAGE NAME : localhost:32000/orchestrator
     Check deploy   `microk8s kubectl get deployments`
 
     ```
+    microk8s kubectl get services -o wide
     NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
     orchestrator-service   ClusterIP   10.152.183.101   <none>        5045/TCP   8m21s   app=orchestrator
     ```
