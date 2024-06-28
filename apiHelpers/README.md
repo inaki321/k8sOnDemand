@@ -62,7 +62,7 @@ Second run
     - microservice-2 = not-assigned-yet
 ```
 
-checks every 15 secs if there are available pods (not-assigned-yet) if not, replicate + 1 `setInterval(checkAndScale, 15000);`
+Orchestrator checks every 15 secs if there are available pods (not-assigned-yet) if not, replicate + 1 `setInterval(checkAndScale, 15000);`
 
 <img src="./res2.png" alt="alt text" width="600"/>
 
@@ -93,7 +93,7 @@ Third run
     - microservice-3 = not-assigned-yet
 ```
 
-checks every 15 secs if there are available pods (not-assigned-yet) if not, replicate + 1 `setInterval(checkAndScale, 15000);`
+Orchestrator checks every 15 secs if there are available pods (not-assigned-yet) if not, replicate + 1 `setInterval(checkAndScale, 15000);`
 
 
 <img src="./res3.png" alt="alt text" width="600"/>
