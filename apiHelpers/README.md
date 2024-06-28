@@ -82,7 +82,7 @@ First run
 - "ximi" INITIALIZES the server because there are no pods for "chefs" server
 
 Second run 
-- "pepe" Calls directly "chefs" podUrl because microservice has already been started
+- "bori" Calls directly "chefs" podUrl because microservice has already been started
 
 Third run 
 - "inaki" Calls directly "engineers" podUrl microservice server has already been started
