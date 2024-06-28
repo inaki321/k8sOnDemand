@@ -99,4 +99,4 @@ Orchestrator checks every 15 secs if there are available pods (not-assigned-yet)
 
 Need available pods ready for a user that might need it for a new user group
 
-<img src="./res3.png" alt="alt text" width="600"/>
+<img src="./res3.png" alt="alt text" width="700"/>
