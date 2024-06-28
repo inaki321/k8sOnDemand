@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.microservice.name }}
+spec:
+  serviceName: "{{ .Values.microservice.name }}"
+  replicas: 2 # Number of replicas
+  selector:
+    matchLabels:
+      app: {{ .Values.microservice.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.microservice.name }}
+        assigned: null
+        # assigned: 'uncommentexampleWithAssignedPodPerGroup'
+    spec:
+      containers:
+      - name: {{ .Values.microservice.name }}-container
+        image: {{ .Values.image.address }}/{{ .Values.microservice.container }}
+        ports:
+        - containerPort: {{ .Values.microservice.port }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.microservice.name }}
+spec:
+  clusterIP: None # This makes it a headless service
+  selector:
+    app: {{ .Values.microservice.name }}
+  ports:
+  - port: {{ .Values.microservice.port }}
+    targetPort: {{ .Values.microservice.port }}

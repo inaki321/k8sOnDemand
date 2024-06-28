@@ -1,0 +1,23 @@
+#global vars
+image:
+  address: localhost:32000
+
+#app vars
+app:
+  name: main-server
+  port: 5000
+  staticIP: 10.152.183.100
+  container: main-server
+
+#microservices vars
+microservice:
+  name: microservice
+  port: 5983
+  container: microservice
+
+#orchestrator vars
+orchestrator:
+  name: orchestrator
+  port: 5045
+  staticIP: 10.152.183.101
+  container: orchestrator

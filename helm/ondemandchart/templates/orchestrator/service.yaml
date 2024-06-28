@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.orchestrator.name }}-service
+spec:
+  selector:
+    app: {{ .Values.orchestrator.name }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.orchestrator.port }}
+    targetPort: {{ .Values.orchestrator.port }}
+  clusterIP: {{ .Values.orchestrator.staticIP }}
+  type: ClusterIP

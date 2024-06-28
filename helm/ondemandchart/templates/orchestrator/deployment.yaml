@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.orchestrator.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.orchestrator.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.orchestrator.name }}
+    spec:
+      containers:
+      - name: {{ .Values.orchestrator.name }}
+        image: {{ .Values.image.address }}/{{ .Values.orchestrator.container }}
+        ports:
+        - containerPort: {{ .Values.orchestrator.port }}
