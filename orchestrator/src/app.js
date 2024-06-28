@@ -2,6 +2,7 @@ import { assingLabeltoPod, getAvailablePods, getGroupPod, getStatefulDeployments
 //this library directly grabs the gcloud configuration in your machine 
 import k8s from '@kubernetes/client-node';
 import express from 'express'
+import fetch from 'node-fetch';
 
 const app = express();
 app.use(express.json());
@@ -35,9 +36,27 @@ app.post('/assign-pod', async (req, res) => {
     console.log('available pods: ', availablePods);
 
     const assignStatus = await assingLabeltoPod(kc, namespace, availablePods, group);
+    let initServer;
     if (assignStatus) {
         console.log('pod assigned ', assignStatus);
-        res.status(200).send({ succes: assignStatus });
+        console.log('Initializing server with url ', `http://${assignStatus.podIP}:5983/initServer`);
+        try {
+            const res = await fetch(`http://${assignStatus.podIP}:5983/initServer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'group': group })
+            });
+            initServer = await res.json();
+        } catch (e) {
+            console.log('Error intializing server ' + e);
+        }
+
+        res.status(200).send({
+            pod: assignStatus,
+            initServer: initServer
+        });
     } else {
         res.status(439).send({ error: 'Error updating the pod label ' });
     }

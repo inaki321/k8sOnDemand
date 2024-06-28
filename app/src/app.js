@@ -46,17 +46,25 @@ app.get('/login/user/:user', async (req, res) => {
         podUrl = await res.json();
         console.log(podUrl)
 
-
     } catch (e) {
         console.log('ERROR: ' + e);
-        res.status(239).send({ 'error': 'Error getting pod ' + e });
+        res.status(439).send({ 'error': 'Error getting pod ' + e });
         return;
     }
 
-    console.log(podUrl)
+
+    let microserverRes = undefined;
+    try {
+        const res = await fetch(`http://${podUrl.podIP}:5983/`);
+        microserverRes = await res.text();
+    } catch (e) {
+        console.log('Error intializing server ' + e);
+    }
+
     res.status(200).send({
-        'success': 'User with pod assinged correctly',
-        'pod': podUrl
+        'success': true,
+        'pod': podUrl,
+        'microserverRes': microserverRes,
     });
 });
 
