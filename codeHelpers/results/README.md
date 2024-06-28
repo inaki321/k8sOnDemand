@@ -1,6 +1,3 @@
-# Diagram
-Image of the lucidapp
-
 # Results
 All these results run in order from top to bottom
 
