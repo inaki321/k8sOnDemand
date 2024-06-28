@@ -1,6 +1,8 @@
 # k8sOnDemand
 Example of creating deployments on demand
 
+Node version == v20.14.0, npm version == 10.7.0, python version == 3.10
+
 ## USES MICROK8S
 ```
 sudo snap install microk8s --classic
