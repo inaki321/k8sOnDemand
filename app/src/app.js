@@ -13,48 +13,52 @@ app.get('/', async (req, res) => {
     res.status(200).send('API working main-server.local');
 });
 
+const groups = {
+    'engineers': ['inaki', 'rafa'],
+    'lawyers': ['juan', 'pepe'],
+    'chef': ['bori', 'ximi'],
+}
+
 //localhost:5000/login/user/engineers
-app.get('/login/user/:group', async (req, res) => {
-    const group = req.params.group;
+app.get('/login/user/:user', async (req, res) => {
+    const user = req.params.user;
 
-    //const groups = ['engineers', 'lawyers', 'doctors', 'chefs', 'ninis'];
-    //const randomGroup = groups[Math.floor(Math.random() * groups.length)]
-
-    console.log('calling orchestrator to assign a pod for group ', group);
+    let foundGroup = Object.entries(groups).find(([key, names]) => names.includes(user))?.[0];
+    if (!foundGroup) foundGroup = 'default';
+    console.log(`Group for ${user} is ${foundGroup} `);
+    console.log('Calling orchestrator to see which pod user needs');
     let podUrl = undefined;
     try {
         // if app running using npm http:localhost:5045
-        //10.1.131.188
         //const res = await fetch('http://orchestrator.local/assign-pod', {
-        // microk8s   kubectl get svc main-server-service
-        //curl my ip adress  curl 10.152.183.100:5000
         console.log('Calling http://10.152.183.101:5045/assign-pod')
-        console.log('with params: ',JSON.stringify({ 'group': group }));
+        console.log('with params: ', JSON.stringify({ 'group': foundGroup }));
         const res = await fetch('http://10.152.183.101:5045/assign-pod', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 'group': group })
+            body: JSON.stringify({ 'group': foundGroup })
         });
 
-        console.log('status: ',res.status)
-        console.log('text: ',res.statusText)
+        console.log('status: ', res.status)
+        console.log('text: ', res.statusText)
         podUrl = await res.json();
         console.log(podUrl)
+
+
     } catch (e) {
         console.log('ERROR: ' + e);
+        res.status(239).send({ 'error': 'Error getting pod ' + e });
+        return;
     }
 
-    console.log('podurl res: ',podUrl);
-
+    console.log(podUrl)
     res.status(200).send({
         'success': 'User with pod assinged correctly',
         'pod': podUrl
     });
 });
-
-
 
 app.listen(5000, () => {
     console.log('Server is running on port 5000');

@@ -22,9 +22,9 @@ app.post('/assign-pod', async (req, res) => {
     kc.loadFromDefault();
     const namespace = 'default';
 
-    const groupPod = await getGroupPod(kc, namespace, group);
-    console.log(groupPod)
+    let groupPod = await getGroupPod(kc, namespace, group);
     if (Object.keys(groupPod).length > 0) {
+        groupPod.assigned = group;
         console.log('Group pod already assinged: ', groupPod);
         res.status(200).send(groupPod)
         return;
