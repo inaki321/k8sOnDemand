@@ -175,3 +175,10 @@ This calls my clusterip, the port of the app and the route
 Eg.  `curl http://orchestrator.local/` This is how to call from my end
 
 Eg.  `curl 10.152.183.101:5045/` This how to call between pods
+
+## apiHelpers
+
+`python loginmainserver.py <user>` --> calls main server by user  
+    - Assigns a group pod to user group if not exists pod-assigned=groupname
+    - Returns podUrl
+    - Calls podUrl directly 
