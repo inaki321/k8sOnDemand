@@ -18,6 +18,7 @@ Need my images available, this case uses the images locally pushed
 - pushes the images to docker
 
 ## Run project USING HELM (not like "simple k8s deploy" hehe)
+### my helm chart is /ondemandchart
 - Create helm project, init project, (run only to create the template, skip because there is already a helm template)
 `microk8s helm create ondemandchart`
 
@@ -58,15 +59,15 @@ ondemandchart/
    ├── values.yaml
    ├── templates/
    │   ├── app/
-   │   │   ├── ingress.yaml
-   │   │   ├── deployment.yaml
-   │   │   ├── service.yaml
+   │   │   ├── ingress.yaml --> sets main-server.local to be accesed
+   │   │   ├── deployment.yaml --> creates deployment for docker image
+   │   │   ├── service.yaml --> deploys clusterip service with staticIP 
    │   ├── orchestrator/
-   │   │   ├── ingress.yaml
-   │   │   ├── deployment.yaml
-   │   │   ├── service.yaml
-   │   ├── microservices/
-   │   │   ├── statefulstate.yaml
+   │   │   ├── ingress.yaml --> sets main-server.local to be accesed (unused, because it is accesed by clusterip)
+   │   │   ├── deployment.yaml --> creates deployment for docker image
+   │   │   ├── service.yaml --> deploys clusterip service with staticIP (to be accessed always by main-server)
+   │   ├── microservices/ 
+   │   │   ├── statefulstate.yaml --> variables ip, because it is can have multiple microservices (replicates)
    └──────────────────────────────
 ```
 
