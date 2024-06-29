@@ -9,6 +9,7 @@
 ### need to add 127.0.0.1 main-server.local to /etc/hosts to run
 - we call main-server.local, that is why we define that domain
 - We don't call orchestrator or microservices directly, they comunicate using clusterIP between main-server <--> orchestrator <--> microservices
+- Added in helmdeploy.sh
 
 ### Need docker images
 Need my images available, this case uses the images locally pushed
