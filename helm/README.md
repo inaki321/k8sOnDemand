@@ -45,7 +45,11 @@ creates tar file to export it to any cloud, in helm/ondemandchart
       - orchestrator 
    ```
 
-Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it 
+Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it
+
+Should run like this [code run](../codeHelpers/results/README.md) to test it
+
+Deployment diagram [diagram](../codeHelpers/README.md) 
 
 ## /ondemandchart
 
