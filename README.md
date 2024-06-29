@@ -1,7 +1,7 @@
 # k8sOnDemand
 Example of creating deployments on demand
 
-### [USES MICROK8S](./microk8s/README.md) 
+### [USES MICROK8S](./microk8sandversions/README.md) 
 
 Helpers
 - check my deployments (no namespace)

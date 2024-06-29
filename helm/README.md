@@ -4,7 +4,7 @@
 - simple k8s deploy is without helm
 - We need to run deploy.sh for each folder of `<service>/k8s` to start each service (app, orchestrator and microservices) using k8s
 
-### [USES MICROK8S](../microk8s/README.md) 
+### [USES MICROK8S](../microk8sandversions/README.md) 
 
 ### need to add 127.0.0.1 main-server.local to /etc/hosts to run
 - we call main-server.local, that is why we define that domain
