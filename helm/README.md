@@ -34,7 +34,7 @@ creates tar file to export it to any cloud, in helm/ondemandchart
 - Deletes all k8s services, deploys etc.
 - adds main-server.local to /etc/hosts --> this is the only domain I call
    - that is why I setted up that domain
-   - I can call cluster ip too `curl 10.152.183.100:5000`
+   - I can call cluster ip too `curl 10.152.183.100:5000` or `curl main-server.local`
 
 - Creates or updates the helm chart with changes made in my chart
 - shows all the pods created when deploy:
