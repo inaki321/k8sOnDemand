@@ -1,6 +1,8 @@
 # k8sOnDemand
 Example of creating deployments on demand
 
+Another way to run it using helm  [HELM DEPLOY](./helm/README.md) 
+
 ### [USES MICROK8S](./microk8sandversions/README.md) 
 
 Helpers
