@@ -1,13 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.orchestrator.name }}-service
+  name: {{ .Values.orchestrator.name }}-nodeport-service
+  labels:
+    app: orchestrator
 spec:
   selector:
-    app: {{ .Values.orchestrator.name }}
+    app: orchestrator
   ports:
   - protocol: TCP
-    port: {{ .Values.orchestrator.port }}
-    targetPort: {{ .Values.orchestrator.port }}
+    port: {{ .Values.orchestrator.port }} # export port
+    targetPort: {{ .Values.orchestrator.port }} #app port
+    nodePort: {{ .Values.orchestrator.nodePort }} # export port
   clusterIP: {{ .Values.orchestrator.staticIP }}
-  type: ClusterIP
+  type: NodePort

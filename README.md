@@ -44,6 +44,7 @@ sudo docker start registry
 ```
 
 ## uses NodePort to be accesible from a cloud
+### Pods/services communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP
 Locally I can access to main-server.local and orchestrator.local, I can call the services by it's domain
 
 This is because I added them to /etc/hosts

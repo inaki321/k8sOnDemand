@@ -1,13 +1,13 @@
 ## DELETE ALL K8S FIRST, TO REDEPLOY
 microk8s kubectl delete deployment main-server
-microk8s kubectl delete service main-server-service
+microk8s kubectl delete service main-server-nodeport-service
 microk8s kubectl delete ingress main-server-ingress 
 
 microk8s kubectl delete service microservice
 microk8s kubectl delete statefulset microservice
 
 microk8s kubectl delete deployment orchestrator
-microk8s kubectl delete service orchestrator-service
+microk8s kubectl delete service orchestrator-nodeport-service
 microk8s kubectl delete ingress orchestrator-ingress 
 
 
@@ -41,9 +41,29 @@ microk8s helm status "ondemandrelease"
 
 sleep 2
 
+echo "--------------------PODS--------------------"
 microk8s kubectl get pods -o wide
 
+echo "--------------------SERVICES--------------------"
+microk8s kubectl get services -o wide
+
 sleep 5
-echo "Calling main server to test deploy..."
-curl main-server.local
+
+echo "Now you can call main-server by its domain and its static ip..."
 echo " "
+echo "curl http://main-server.local:31230"
+echo " "
+echo "curl http://10.152.183.100:5000" 
+
+
+echo "Now you can call orchestrator.local by its domain and its static ip..."
+echo " "
+echo "curl http://orchestrator.local:31231"
+echo " "
+echo "curl http://10.152.183.101:5045" 
+echo " "
+
+echo "Now you can call microservices by its dynamic ip..."
+
+
+echo "Pods communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP"

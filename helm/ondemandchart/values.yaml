@@ -8,6 +8,7 @@ app:
   port: 5000
   staticIP: 10.152.183.100
   container: main-server
+  nodePort: 31230
 
 #microservices vars
 microservice:
@@ -21,3 +22,4 @@ orchestrator:
   port: 5045
   staticIP: 10.152.183.101
   container: orchestrator
+  nodePort: 31231

@@ -1,28 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.name }}-clusterip-service
-spec:
-  selector:
+  name: {{ .Values.app.name }}-nodeport-service
+  labels:
     app: {{ .Values.app.name }}
-  ports:
-  - protocol: TCP
-    port: {{ .Values.app.port }}
-    targetPort: {{ .Values.app.port }}
-  clusterIP: {{ .Values.app.staticIP }}
-  type: ClusterIP
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Values.app.name }}-loadbalancer-service
 spec:
-  type: {{ .Values.app.name }}
   selector:
     app: {{ .Values.app.name }}
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: {{ .Values.app.port }}
+      port: {{ .Values.app.port }} # export port 
+      targetPort: {{ .Values.app.port }} #app port
+      nodePort: {{ .Values.app.nodePort }} # export port 
+  type: NodePort
+  clusterIP: {{ .Values.app.staticIP }}
