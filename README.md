@@ -42,3 +42,12 @@ sudo docker run -d -p 32000:5000 --name registry registry:2
 sudo docker start registry
 
 ```
+
+## uses NodePort to be accesible from a cloud
+Locally I can access to main-server.local and orchestrator.local, I can call the services by it's domain
+
+This is because I added them to /etc/hosts
+
+Between the services, they are called by its cluster ip, because they don't have the domain in the /etc/hosts
+
+Exporting the service from a cloud, now I can access by its domain
