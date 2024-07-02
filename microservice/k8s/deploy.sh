@@ -10,4 +10,5 @@ sleep 5
 #shows my microservices 
 microk8s kubectl get pods -o wide -l app=microservice
 
-# curl 10.1.131.158:5983/groupServer
+
+echo "Now you can call microservices by its dynamic ip..."

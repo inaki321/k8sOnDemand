@@ -33,6 +33,8 @@ app.get('/login/user/:user', async (req, res) => {
         //const res = await fetch('http://orchestrator.local/assign-pod', {
         console.log('Calling http://10.152.183.101:5045/assign-pod')
         console.log('with params: ', JSON.stringify({ 'group': foundGroup }));
+        //const res = await fetch('http://orchestrator.local:31231/assign-pod', {       
+        //cant call orchestrator.local because it is not on cloud cluster , everything locally needs cluster ip
         const res = await fetch('http://10.152.183.101:5045/assign-pod', {
             method: 'POST',
             headers: {

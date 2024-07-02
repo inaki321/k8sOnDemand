@@ -11,7 +11,7 @@ import sys
 #default: anyone
 
 user = sys.argv[1]
-url = "http://main-server.local/login/user/"+user
+url = "http://main-server.local:31230/login/user/"+user
 print('calling '+url)
 
 clusterIPUrl ="http://10.152.183.100:5000/login/user/" #url for main server using static cluster IP
