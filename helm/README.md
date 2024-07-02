@@ -34,16 +34,36 @@ creates tar file to export it to any cloud, in helm/ondemandchart
 - Deletes all k8s services, deploys etc.
 - adds main-server.local to /etc/hosts --> this is the only domain I call
    - that is why I setted up that domain
-   - I can call cluster ip too `curl 10.152.183.100:5000` or `curl main-server.local`
+   - I can call cluster ip too `curl 10.152.183.100:5000` or `curl main-server.local:31230`
+
+   - Pods/services communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP
 
 - Creates or updates the helm chart with changes made in my chart
 - shows all the pods created when deploy:
    ```
-      - main-server
-      - microservice-0
-      - microservice-1
-      - orchestrator 
+   ------PODS------
+   NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
+   main-server-8495669c8c-lpvlz    1/1     Running   0          2s    10.1.131.163   tr-2gx5vl3   <none>           <none>
+   microservice-0                  1/1     Running   0          2s    10.1.131.156   tr-2gx5vl3   <none>           <none>
+   microservice-1                  1/1     Running   0          1s    10.1.131.152   tr-2gx5vl3   <none>           <none>
+   orchestrator-66dbcb99b5-lqkzj   1/1     Running   0          2s    10.1.131.153   tr-2gx5vl3   <none>           <none>
    ```
+
+- Shows all the services created when deploy:
+Eg.
+   ```
+   ------SERVICES------
+   NAME                            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE    SELECTOR
+   kubernetes                      ClusterIP   10.152.183.1     <none>        443/TCP          6d1h   <none>
+   main-server-nodeport-service    NodePort    10.152.183.100   <none>        5000:31230/TCP   4s     app=main-server
+   microservice                    ClusterIP   None             <none>        5983/TCP         4s     app=microservice
+   orchestrator-nodeport-service   NodePort    10.152.183.101   <none>        5045:31231/TCP   4s     app=orchestrator
+   ```
+
+- Ways I can call main-server:
+   - `curl  10.152.183.100:5000`
+   - `curl  main-server.local:31230`
+   - `curl  10.1.131.163:5000` dynamic because its pod ip
 
 Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it
 
