@@ -96,4 +96,10 @@ ondemandchart/
    └──────────────────────────────
 ```
 
+-----------------------------
+
+### deleteHelmResources.sh
+
+Deletes all helm and k8s services 
+
 
