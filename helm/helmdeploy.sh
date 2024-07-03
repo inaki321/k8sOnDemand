@@ -80,6 +80,7 @@ echo "Now you can call microservices by its dynamic ip..."
 echo "Pods communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP"
 
 
+sleep 6
 echo "------------------- SERVING GRAFANA to 5055--------------------"
 echo "http://localhost:5055/login"
 microk8s kubectl port-forward -n monitoring svc/grafana 5055:80
