@@ -11,5 +11,9 @@ microk8s kubectl delete deployment orchestrator
 microk8s kubectl delete service orchestrator-nodeport-service
 microk8s kubectl delete ingress orchestrator-ingress 
 
+microk8s kubectl delete configmap grafana-datasources -n monitoring
+microk8s kubectl delete service grafana -n monitoring
+microk8s kubectl delete deployment grafana -n monitoring
+
 echo "Deleting HELM chart..."
 microk8s helm uninstall ondemandrelease

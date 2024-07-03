@@ -1,7 +1,7 @@
 # Helm chart
 
 ##  The project can be run like in [simple k8s deploy](../README.md)  or USING HELM
-- simple k8s deploy is without helm
+- simple k8s deploy is without helm, you have to run `kubectl apply -f file.yaml` for every k8s resource you want to deploy 
 - We need to run deploy.sh for each folder of `<service>/k8s` to start each service (app, orchestrator and microservices) using k8s
 
 ### [USES MICROK8S](../microk8sandversions/README.md) 
@@ -101,5 +101,24 @@ ondemandchart/
 ### deleteHelmResources.sh
 
 Deletes all helm and k8s services 
+
+
+### grafana
+
+user: admin
+pass: admin
+
+### Data sources
+My services I want to use 
+Home --> Connections --> Data sources
+
+#### Import dashboards
+Dashboards templates 
+https://grafana.com/grafana/dashboards/ 
+
+Copy Id clipboard from grafana dashboards and paste it in my "import dashboard"
+
+Home --> Dashboards --> Import dashboard
+
 
 

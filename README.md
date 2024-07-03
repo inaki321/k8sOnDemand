@@ -7,12 +7,13 @@ Example of creating deployments on demand
 
 ## Run 
 
-- Run by using k8s only 
+- Run by using k8s only  "simple k8s deploy"
     - Deploy app `/app/k8s -> bash deploy.sh` 
     - Deploy microservices `/microservice/k8s -> bash deploy.sh` 
     - Deploy orchestrator `/orchestrator/k8s -> bash deploy.sh` 
 
 - Run by using helm chart
+    - Helm chart uses grafana 
     - [HELM DEPLOY](./helm/README.md) 
 
 ### [USES MICROK8S](./microk8sandversions/README.md) 
@@ -29,6 +30,10 @@ Helpers
 `microk8s kubectl get pod <pod-name> -o jsonpath='{.metadata.ownerReferences[0].kind}'` type of pod 
 
 `microk8s kubectl get statefulsets`
+
+`microk8s kubectl get nodes -o wide` --> get my nodes in my k8s, gets locally nodes if not connected to any cloud 
+
+`microk8s kubectl describe pod <pod-name>` --> logs check pod status (container creating taking too much time, err pod pull image etc.)
 
 ###  Locally need to intialize docker for fetching those images, saved in http://localhost:32000/v2/_catalog
 

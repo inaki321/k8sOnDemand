@@ -1,16 +1,27 @@
 ## DELETE ALL K8S FIRST, TO REDEPLOY
+
+# DELETE MAIN SERVER K8S 
 microk8s kubectl delete deployment main-server
 microk8s kubectl delete service main-server-nodeport-service
 microk8s kubectl delete ingress main-server-ingress 
 
+# DELETE MICROSERVICES K8S 
 microk8s kubectl delete service microservice
 microk8s kubectl delete statefulset microservice
 
+# DELETE ORCHESTRATOR K8S 
 microk8s kubectl delete deployment orchestrator
 microk8s kubectl delete service orchestrator-nodeport-service
 microk8s kubectl delete ingress orchestrator-ingress 
 
+# DELETE GRAFAANA K8S and create NAMESPACE for it 
 
+microk8s kubectl delete configmap grafana-datasources -n monitoring
+microk8s kubectl delete service grafana -n monitoring
+microk8s kubectl delete deployment grafana -n monitoring
+
+microk8s kubectl delete namespace monitoring
+microk8s kubectl create namespace monitoring
 
 #set localhost  in /etc/hosts for main-server-local
 sudo sed -i.bak '/main-server.local/d' /etc/hosts
@@ -67,3 +78,8 @@ echo "Now you can call microservices by its dynamic ip..."
 
 
 echo "Pods communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP"
+
+
+echo "------------------- SERVING GRAFANA to 5055--------------------"
+echo "http://localhost:5055/login"
+microk8s kubectl port-forward -n monitoring svc/grafana 5055:80
