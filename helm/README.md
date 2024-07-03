@@ -105,9 +105,17 @@ Deletes all helm and k8s services
 ----------------------
 
 ### grafana
-Export service once deployed 
+Export service once deployed  to access by localhost:5055
 
 `microk8s kubectl port-forward -n monitoring svc/grafana 5055:80`
+
+`microk8s kubectl get service -n monitoring -o wide`
+```
+NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE     SELECTOR
+grafana   NodePort   10.152.183.19   <none>        80:30036/TCP   2m33s   app=grafana
+```
+
+
 
 user: admin
 pass: admin
