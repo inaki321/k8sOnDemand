@@ -108,6 +108,8 @@ Deletes all helm and k8s services
 
 This creates the prometheus-grafana server, already in helmdeploy.sh
 
+Grafana and prometheus pods, services are on --namespace monitoring 
+
 ```
 # add charts 
 microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts

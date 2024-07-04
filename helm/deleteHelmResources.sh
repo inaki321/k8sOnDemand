@@ -7,6 +7,5 @@ kubectl delete statefulsets --all
 
 echo "Deleting HELM chart..."
 microk8s helm uninstall ondemandrelease
-
-#microk8s helm uninstall grafana
-#microk8s helm uninstall prometheus
+microk8s helm uninstall grafana --namespace monitoring
+microk8s helm uninstall prometheus --namespace monitoring

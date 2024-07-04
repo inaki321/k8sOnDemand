@@ -24,9 +24,9 @@
 microk8s kubectl delete pods --all
 microk8s kubectl delete services --all
 microk8s kubectl delete deployments --all
-kubectl delete statefulsets --all
+microk8s kubectl delete statefulsets --all
 
-# Create monitoring namespace 
+# Create monitoring namespace for grafana and prometheus 
 microk8s kubectl delete namespace monitoring
 microk8s kubectl create namespace monitoring
 
@@ -55,18 +55,23 @@ else
 fi
 
 #--------------------------- prometheus-community HELM CHART---------------------------
+#add repo in case doesn't exists 
 if ! microk8s helm repo list | grep prometheus-community ; then
     echo "prometheus-community repo not added, adding it to helm"
     microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 fi
 
+#upgrade or install helm chart
+# use preconfigured values /grafanaprometheus/values.yaml
+# to fetch my pods values 
 if ! microk8s helm list | grep prometheus ; then
     echo "installing prometheus helm chart"
-    microk8s helm install prometheus prometheus-community/prometheus
+    microk8s helm install prometheus prometheus-community/prometheus -f grafanaprometheus/values.yaml --namespace monitoring
 else
     echo "upgrading prometheus helm chart"
-    microk8s helm upgrade prometheus prometheus-community/prometheus
+    microk8s helm upgrade prometheus prometheus-community/prometheus -f grafanaprometheus/values.yaml --namespace monitoring
 fi
+
 
 #--------------------------- prometheus-community HELM CHART---------------------------
 if ! microk8s helm repo list | grep grafana ; then
@@ -76,10 +81,10 @@ fi
 
 if ! microk8s helm list | grep grafana ; then
     echo "installing grafana helm chart"
-    microk8s helm install grafana grafana/grafana
+    microk8s helm install grafana grafana/grafana --namespace monitoring
 else
     echo "upgrading grafana helm chart"
-    microk8s helm upgrade grafana grafana/grafana
+    microk8s helm upgrade grafana grafana/grafana --namespace monitoring
 fi
 
 
@@ -109,7 +114,7 @@ echo "curl http://main-server.local:31230"
 echo " "
 echo "curl http://10.152.183.100:5000" 
 
-
+echo " "
 echo "Now you can call orchestrator.local by its domain and its static ip..."
 echo " "
 echo "curl http://orchestrator.local:31231"
@@ -127,10 +132,12 @@ echo "--------------------------------------------------Grafana and prometheus--
 sleep 2
 
 echo "Run in a terminal to expose prometheus to localhost:9090"
-echo "microk8s kubectl port-forward service/prometheus-server 9090:80"
+echo " microk8s kubectl port-forward service/prometheus-server 9090:80 -n monitoring"
+
+echo "You can see prometheus targets in http://localhost:9090/targets"
 
 echo " "
 echo "Run in a terminal to expose grafana to localhost:3200"
-echo "microk8s kubectl port-forward service/grafana 3200:80"
+echo " microk8s kubectl port-forward service/grafana 3200:80 -n monitoring"
 
 #microk8s kubectl port-forward -n monitoring svc/grafana 5055:80
