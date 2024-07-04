@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.orchestrator.name }}
+        identifier: k8sondemand
     spec:
       containers:
       - name: {{ .Values.orchestrator.name }}

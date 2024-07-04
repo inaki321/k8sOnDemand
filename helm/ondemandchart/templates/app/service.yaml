@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.app.name }}-nodeport-service
   labels:
     app: {{ .Values.app.name }}
+    identifier: k8sondemand
 spec:
   selector:
     app: {{ .Values.app.name }}

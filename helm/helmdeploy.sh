@@ -1,4 +1,4 @@
-## DELETE ALL K8S FIRST, TO REDEPLOY
+## --------------------------- DELETE ALL K8S FIRST, TO REDEPLOY ---------------------------
 
 # DELETE MAIN SERVER K8S 
 microk8s kubectl delete deployment main-server
@@ -23,20 +23,22 @@ microk8s kubectl delete deployment grafana -n monitoring
 microk8s kubectl delete namespace monitoring
 microk8s kubectl create namespace monitoring
 
+
+#--------------------------- Add domain to etc/hosts ---------------------------
 #set localhost  in /etc/hosts for main-server-local
 sudo sed -i.bak '/main-server.local/d' /etc/hosts
 echo "127.0.0.1 main-server.local" | sudo tee -a /etc/hosts
 
 
 #HELM
+#--------------------------- ondemandrelease HELM CHART ---------------------------
 # chart name ondemandrelease 
 # can change this bash file with whatever name you want for the chart
-
 # delete helm chart, if deleted helm chart, it is going to create a new release
 
 # microk8s helm uninstall ondemandrelease
 
-# Install helm chart (new ) or update it 
+# Install helm chart k8sonemdand chart 
 if microk8s helm status "ondemandrelease" ; then
     echo "release already exists, updating release..."
     microk8s helm upgrade ondemandrelease ./ondemandchart 
@@ -45,6 +47,36 @@ else
     microk8s helm install ondemandrelease ./ondemandchart
 fi
 
+#--------------------------- prometheus-community HELM CHART---------------------------
+if ! microk8s helm repo list | grep prometheus-community ; then
+    echo "prometheus-community repo not added, adding it to helm"
+    microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+fi
+
+if ! microk8s helm list | grep prometheus ; then
+    echo "installing prometheus helm chart"
+    microk8s helm install prometheus prometheus-community/prometheus
+else
+    echo "upgrading prometheus helm chart"
+    microk8s helm upgrade prometheus prometheus-community/prometheus
+fi
+
+#--------------------------- prometheus-community HELM CHART---------------------------
+if ! microk8s helm repo list | grep grafana ; then
+    echo "garafana repo not added, adding it to helm"
+    microk8s helm repo add grafana https://grafana.github.io/helm-charts
+fi
+
+if ! microk8s helm list | grep grafana ; then
+    echo "installing grafana helm chart"
+    microk8s helm install grafana grafana/grafana
+else
+    echo "upgrading grafana helm chart"
+    microk8s helm upgrade grafana grafana/grafana
+fi
+
+
+#--------------------------- SHOW K8S AND HELM REUSLTS ---------------------------
 
 echo "-------------------------"
 echo "-------------------------"
@@ -52,13 +84,17 @@ microk8s helm status "ondemandrelease"
 
 sleep 2
 
+# ONLY SHOW K8SONDEMMAND SERVICES AND PODS BY IDENTIFIER 
+
 echo "--------------------PODS--------------------"
-microk8s kubectl get pods -o wide
+microk8s kubectl get pods -o wide -l identifier=k8sondemand
 
 echo "--------------------SERVICES--------------------"
-microk8s kubectl get services -o wide
+microk8s kubectl get services -o wide -l identifier=k8sondemand
 
-sleep 5
+sleep 2
+
+echo "--------------------------------------------------ondemand release chart ----------------- "
 
 echo "Now you can call main-server by its domain and its static ip..."
 echo " "
@@ -80,7 +116,14 @@ echo "Now you can call microservices by its dynamic ip..."
 echo "Pods communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP"
 
 
-sleep 6
-echo "------------------- SERVING GRAFANA to 5055--------------------"
-echo "http://localhost:5055/login"
-microk8s kubectl port-forward -n monitoring svc/grafana 5055:80
+echo "--------------------------------------------------Grafana and prometheus----------------- "
+sleep 2
+
+echo "Run in a terminal to expose prometheus to localhost:9090"
+echo "microk8s kubectl port-forward service/prometheus-server 9090:80"
+
+echo " "
+echo "Run in a terminal to expose grafana to localhost:3200"
+echo "microk8s kubectl port-forward service/grafana 3200:80"
+
+#microk8s kubectl port-forward -n monitoring svc/grafana 5055:80

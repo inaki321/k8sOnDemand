@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.app.name }}
+        identifier: k8sondemand
     spec:
       containers:
       - name: {{ .Values.app.name }}

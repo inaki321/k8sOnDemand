@@ -104,17 +104,40 @@ Deletes all helm and k8s services
 
 ----------------------
 
-### grafana
+### grafana prometheus
+
+This creates the prometheus-grafana server, already in helmdeploy.sh
+
+```
+# add charts 
+microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+microk8s helm repo add grafana https://grafana.github.io/helm-charts
+
+# helm update data
+microk8s helm repo update
+
+# install in case not installed, if not update 
+microk8s helm install prometheus prometheus-community/prometheus
+microk8s helm install grafana grafana/grafana
+
+
+# Access to grafana and prometheus using localhost for :9000 and :3000 
+microk8s kubectl port-forward service/prometheus-server 9090:80
+microk8s kubectl port-forward service/grafana 3000:80
+
+# modify helm values if needed 
+
+helm show values prometheus-community/prometheus > prometheus-values.yaml
+helm show values grafana/grafana > grafana-values.yaml
+
+# Edit prometheus-values.yaml and grafana-values.yaml as needed
+
+helm install prometheus prometheus-community/prometheus -f prometheus-values.yaml
+helm install grafana grafana/grafana -f grafana-values.yaml
+
+```
+
 Export service once deployed  to access by localhost:5055
-
-`microk8s kubectl port-forward -n monitoring svc/grafana 5055:80`
-
-`microk8s kubectl get service -n monitoring -o wide`
-```
-NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE     SELECTOR
-grafana   NodePort   10.152.183.19   <none>        80:30036/TCP   2m33s   app=grafana
-```
-
 
 
 user: admin

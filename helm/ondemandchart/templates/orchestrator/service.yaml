@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.orchestrator.name }}-nodeport-service
   labels:
     app: orchestrator
+    identifier: k8sondemand
 spec:
   selector:
     app: orchestrator

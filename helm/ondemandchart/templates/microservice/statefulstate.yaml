@@ -13,6 +13,7 @@ spec:
       labels:
         app: {{ .Values.microservice.name }}
         assigned: null
+        identifier: k8sondemand
         # assigned: 'uncommentexampleWithAssignedPodPerGroup'
     spec:
       containers:
