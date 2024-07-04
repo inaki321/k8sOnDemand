@@ -110,6 +110,8 @@ This creates the prometheus-grafana server, already in helmdeploy.sh
 
 Grafana and prometheus pods, services are on --namespace monitoring 
 
+grafana and prometeus values to use are in /grafanaprometheus/values.yaml
+
 ```
 # add charts 
 microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts

@@ -7,3 +7,25 @@ serverFiles:
       - job_name: 'orchestrator'
         static_configs:
           - targets: ['10.152.183.101:5045'] # or 'main-server.local:31230'
+
+
+      - job_name: 'microservices'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: microservice
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            target_label: __address__
+            regex: (.+)
+            replacement: $1
+          - source_labels: [__meta_kubernetes_pod_ip]
+            action: replace
+            target_label: __address__
+            regex: (.+)
+            replacement: $1:5983 ##port of my microservice app ;  can use instead too $1:$(PROMETHEUS_PORT)

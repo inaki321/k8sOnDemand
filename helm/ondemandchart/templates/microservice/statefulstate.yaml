@@ -15,6 +15,9 @@ spec:
         assigned: null
         identifier: k8sondemand
         # assigned: 'uncommentexampleWithAssignedPodPerGroup'
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '5983'
     spec:
       containers:
       - name: {{ .Values.microservice.name }}-container
