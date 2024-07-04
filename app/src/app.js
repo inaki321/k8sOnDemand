@@ -1,11 +1,24 @@
 import express, { json } from 'express';
 import fetch from 'node-fetch';
+import promClient from 'prom-client';
 
 const app = express();
 app.use(express.json());
 app.use(express.json({
     limit: '250mb',
 }));
+
+// Create a Registry which registers the metrics
+const register = new promClient.Registry();
+// Add a default metrics collection
+promClient.collectDefaultMetrics({ register });
+// Create a custom metric
+const httpRequestDurationMicroseconds = new promClient.Histogram({
+    name: 'http_request_duration_ms',
+    help: 'Duration of HTTP requests in ms',
+    labelNames: ['method', 'route', 'code'],
+    buckets: [50, 100, 200, 300, 400, 500] // buckets for response time from 50ms to 500ms
+});
 
 
 app.get('/', async (req, res) => {
@@ -68,6 +81,20 @@ app.get('/login/user/:user', async (req, res) => {
         'pod': podUrl,
         'microserverRes': microserverRes,
     });
+});
+
+// Middleware to measure request duration
+app.use((req, res, next) => {
+    const end = httpRequestDurationMicroseconds.startTimer();
+    res.on('finish', () => {
+        end({ method: req.method, route: req.route ? req.route.path : 'unknown', code: res.statusCode });
+    });
+    next();
+});
+// Endpoint to expose metrics
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
 });
 
 app.listen(5000, () => {
