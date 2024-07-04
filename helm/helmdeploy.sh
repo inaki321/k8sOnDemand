@@ -134,7 +134,7 @@ sleep 2
 echo "Run in a terminal to expose prometheus to localhost:9090"
 echo " microk8s kubectl port-forward service/prometheus-server 9090:80 -n monitoring"
 
-echo "You can see prometheus targets in http://localhost:9090/targets"
+echo "You can see prometheus targets in http://localhost:9090/targets (takes 1-2 mins to fetch metrics)"
 
 echo " "
 echo "Run in a terminal to expose grafana to localhost:3200"
