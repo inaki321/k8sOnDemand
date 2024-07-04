@@ -28,7 +28,7 @@ microk8s kubectl delete statefulsets --all
 
 # Create monitoring namespace for grafana and prometheus 
 microk8s kubectl delete namespace monitoring
-microk8s kubectl create namespace monitoring
+microk8s kubectl create namespace monitoring #takes time creating namespace 
 
 
 #--------------------------- Add domain to etc/hosts ---------------------------

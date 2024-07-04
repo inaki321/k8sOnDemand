@@ -4,3 +4,6 @@ serverFiles:
       - job_name: 'main-server'
         static_configs:
           - targets: ['10.152.183.100:5000'] # or 'main-server.local:31230'
+      - job_name: 'orchestrator'
+        static_configs:
+          - targets: ['10.152.183.101:5045'] # or 'main-server.local:31230'

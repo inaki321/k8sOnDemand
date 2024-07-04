@@ -8,6 +8,7 @@ app.use(express.json({
     limit: '250mb',
 }));
 
+// prometheus metrics
 // Create a Registry which registers the metrics
 const register = new promClient.Registry();
 // Add a default metrics collection
@@ -19,7 +20,7 @@ const httpRequestDurationMicroseconds = new promClient.Histogram({
     labelNames: ['method', 'route', 'code'],
     buckets: [50, 100, 200, 300, 400, 500] // buckets for response time from 50ms to 500ms
 });
-
+// prometheus metrics
 
 app.get('/', async (req, res) => {
     console.log('API working main-server.local');
@@ -83,6 +84,7 @@ app.get('/login/user/:user', async (req, res) => {
     });
 });
 
+// prometheus metrics
 // Middleware to measure request duration
 app.use((req, res, next) => {
     const end = httpRequestDurationMicroseconds.startTimer();
@@ -96,6 +98,7 @@ app.get('/metrics', async (req, res) => {
     res.set('Content-Type', register.contentType);
     res.end(await register.metrics());
 });
+// prometheus metrics
 
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
