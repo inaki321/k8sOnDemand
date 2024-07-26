@@ -22,7 +22,12 @@
 ### Both deploy.sh files
 - Deletes previous deployment and nodeport service
 - Creates deployment, pod with 1 replica, with env variables, storage and app running in 5000
- 
+
+### nodeport.yaml 
+- Creates a nodeport service for both, deploy EXTERNAL and INTERNAL
+- EXTERNAL uses 80(http) and 443(https)
+- INTERNAL uses 31230 and 5000
+
 ### `bash locallydeploy.sh` --> One example to expose, nodeport (can use clusterip the same way, just change type)
 - **Nodeport** service (create)
     - Locally access to cluster app *selector: main-server*
@@ -30,16 +35,18 @@
 - Adds *main-server.local* to */etc/hosts* to have a domain to access in local cluster too
 
 ### `bash clouddeploy.sh` -->  Two examples to expose, ingress and loadbalancer
+- If running k8s in VM, you can skip loadbalancer, better use ingress
+
 - **Loadbalancer**, this is going to create a generic url to be accessed outside the cloud (locally needs to use microk8s metallb)
-- Ingress
+- Ingress, selects a service to use for deploying by domain
     - Need to create a certificate for https/tls, both work, CHOOSE ONE ONLY 
-        - k8s in VM **("$)** <--> (search in ingress.yaml): uses tls 
+        - k8s inside a  VM **("$)** <--> (search in ingress.yaml): uses tls 
             - Enable 443 on network settings in case running a VM
             - `sudo certbot certonly --manual --preferred-challenges dns -d domain-url.co`  -> creates .key and .cert
                 - Add information of certbot with dns zone, need to add domain to cloud service and sync information between
             - `kubectl create secret tls main-server-secret-tls --cert=path/to/tls.crt --key=path/to/tls.key` --> create tls to expose https
 
-        - Kubernetes Cloud Engine **("#)** <--> (search in ingress.yaml): uses https, this case is for GCP 
+        - Kubernetes Cloud Engine cloud service **("#)** <--> (search in ingress.yaml): uses https, this case is for GCP 
             - Create certificate on cloud 
             - Use that certificate created on the cloud in the same cloud 
             - Create certificate **managed-cert.yaml**
@@ -48,7 +55,7 @@
         ```
         backend: #this is what I'll be looking forward to get the services, 
         service: 
-            name: main-server-nodeport-service  #select my nodeport service to expose to outside cluster 
+            name: http-nodeport-service  # choose service exposing to outside the cluster
         ```
 
 

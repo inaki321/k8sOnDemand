@@ -23,7 +23,7 @@ spec:
         pathType: Prefix
         backend: #this is what I'll be looking forward to get the services, 
           service: 
-            name: main-server-nodeport-service # in case I want to use my load balancer, I'll use main-server-loadbalancer-service
+            name: http-nodeport-service # choose service exposing to outside the cluster
             port:
               number: 5000
 

@@ -11,9 +11,27 @@ spec:
   selector:
     app: main-server
   ports:
-    - protocol: TCP
-      port: 5000 # export port 
-      targetPort: 5000 #app port
-      nodePort: 31230 # export port 
+
+# can choose one, EXTERNAL AND INTERNAL IPS
+
+  # 1 INTERNAL
+  # NODEPORT FOR LOCAL ENVIRONMENT
+    - name: locally-app-port
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 31230
+  # NODEPORT FOR LOCAL ENVIRONMENT
+
+  # 2 EXTERNAL 
+  # NODEPORT FOR CLOUD ENVIRONMENT
+    - name: http-nodeport-service
+      port: 80
+      targetPort: 5000
+    - name: http-nodeport-service
+      protocol: TCP
+      port: 443
+      targetPort: 5000
+  # NODEPORT FOR CLOUD ENVIRONMENT
   type: NodePort
-  clusterIP: 10.152.183.100
+  clusterIP: 10.152.183.100 #static ip to always get the same clusterip, can skip on cloud services or if no need of static ips
