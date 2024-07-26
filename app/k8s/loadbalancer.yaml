@@ -1,0 +1,13 @@
+#ONLY FOR EXTERNAL ACCESS, INDEPENDENT TO INGRESS
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-server-loadbalancer-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: main-server ## searches for my app deployment 
+  ports:
+    - port: 5000 # expose port 
+      targetPort: 8080 # pod port 
+      nodePort: 35010

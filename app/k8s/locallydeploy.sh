@@ -1,12 +1,10 @@
 #deletes the created resouces if exists 
 microk8s kubectl delete deployment main-server
 microk8s kubectl delete service main-server-nodeport-service
-microk8s kubectl delete ingress main-server-ingress 
 
 #generate deployment
 microk8s kubectl apply -f deployment.yaml
-microk8s kubectl apply -f service.yaml
-microk8s kubectl apply -f ingress.yaml
+microk8s kubectl apply -f nodeport.yaml
 
 sleep 5
 

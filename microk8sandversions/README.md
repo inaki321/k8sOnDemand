@@ -20,9 +20,11 @@
 ## USES MICROK8S
 ```
 sudo snap install microk8s --classic
-microk8s enable dns storage
+microk8s enable dns storage 
 microk8s enable registry
 microk8s enable ingress
+
+microk8s enable metallb # this is just for exposing loadbalancer, no needed in cloud services, locally works with nodeport-clusterip
 
 # set sudo permissions if microk8s doesn't have
 # my username: inaki99

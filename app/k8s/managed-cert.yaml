@@ -1,0 +1,8 @@
+# USED IN INGRESS TO SETUP CERTIFICATE IN CASE USING K8S CLUSTER, NOOOOT INSIDE VM
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-cert
+spec:
+  domains:
+    - "main-server.local"

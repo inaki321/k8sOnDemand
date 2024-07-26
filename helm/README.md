@@ -4,6 +4,9 @@
 - simple k8s deploy is without helm, you have to run `kubectl apply -f file.yaml` for every k8s resource you want to deploy 
 - We need to run deploy.sh for each folder of `<service>/k8s` to start each service (app, orchestrator and microservices) using k8s
 
+
+THIS PROJECT DEPLOYS LOCALLY, WE CAN USE 
+
 ### [USES MICROK8S](../microk8sandversions/README.md) 
 
 ### need to add 127.0.0.1 main-server.local to /etc/hosts to run

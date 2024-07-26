@@ -1,9 +1,19 @@
+# DEPENDANT TO NODEPORT OR CLUSTERIP, GRABS A SERVICE AND EXPOSE BY INGRESS 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: main-server-ingress
+  name: main-server-ingress-service
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    ingressClassName: "gce"
+    ## "$ "$ "$ "$  
+    ### "$ THIS PART IS FOR HTTPS CERTIFICATE, IN CASE YOU ARE EXPOSING BY KUBERNETES CLOUD PROVIDER ENGINE
+    # this is for google kubernetes engine, depends on cloud provider 
+    kubernetes.io/ingress.global-static-ip-name: "main-server.local"
+    kubernetes.io/ingress.allow-http: "true"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "certificate-saved-in-cloud"  # certificate in google  gcloud compute ssl-certificates list
+    networking.gke.io/managed-certificates: managed-cert # certificate created in k8s 
+    ### "$ THIS PART IS FOR HTTPS CERTIFICATE, IN CASE YOU ARE EXPOSING BY KUBERNETES CLOUD PROVIDER ENGINE
+    ## "$ "$ "$ "$ 
 spec:
   rules:
   - host: main-server.local
@@ -11,8 +21,17 @@ spec:
       paths:
       - path: /
         pathType: Prefix
-        backend:
-          service:
-            name: main-server-service
+        backend: #this is what I'll be looking forward to get the services, 
+          service: 
+            name: main-server-nodeport-service # in case I want to use my load balancer, I'll use main-server-loadbalancer-service
             port:
               number: 5000
+
+## "# "# "# "# "#
+### "# THIS PART IS FOR TLS CERTIFICATE, IN CASE YOU ARE EXPOSING USING A VM
+  tls:
+    - hosts:
+      - main-server.local
+      secretName: "main-server-secret-tls"
+### "# THIS PART IS FOR TLS CERTIFICATE, IN CASE YOU ARE EXPOSING USING A VM
+## "# "# "# "# "#
