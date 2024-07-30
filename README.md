@@ -8,12 +8,13 @@ Example of creating deployments on demand
 ## Run 
 
 - Run by using k8s only  "simple k8s deploy"
-    - Deploy app `/app/k8s -> bash deploy.sh` 
+    - Deploy app `/app/k8s ` for local environment `bash locallydeploy.sh`, in a k8s cloud cluster (google this case )`bash clouddeploy.sh`
     - Deploy microservices `/microservice/k8s -> bash deploy.sh` 
     - Deploy orchestrator `/orchestrator/k8s -> bash deploy.sh` 
 
 - Run by using helm chart
     - Helm chart uses grafana 
+    - This is only for local environment, more info about ips, external and internal deploys in folders /app, /orchestrator and /microservices 
     - [HELM DEPLOY](./helm/README.md) 
 
 ### [USES MICROK8S](./microk8sandversions/README.md) 
@@ -48,12 +49,7 @@ sudo docker start registry
 
 ```
 
-## uses NodePort to be accesible from a cloud
-### Pods/services communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP
-Locally I can access to main-server.local and orchestrator.local, I can call the services by it's domain
 
-This is because I added them to /etc/hosts
 
-Between the services, they are called by its cluster ip, because they don't have the domain in the /etc/hosts
-
-Exporting the service from a cloud, now I can access by its domain
+# UPDATE HELPERS
+# WHAT IS A DEPLOY, POD AND EXTERNAL AND INTERNAL IPS 

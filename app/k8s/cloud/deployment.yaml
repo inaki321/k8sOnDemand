@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main-server
+  template:
+    metadata:
+      labels:
+        app: main-server
+    spec:
+      containers:
+      - name: main-server
+        image: localhost:32000/main-server
+        ports:
+        - containerPort: 5000
+        env:
+          - name: ENV_VARIABLE
+            value: "test_env_123"
+        volumeMounts:
+          - mountPath: /var/storage/host  # can be accessed in the container, local storage if needed or use a cloud provider to store
+            # save on var/storage/host/logs.txt 
+            name: storage-host
+      volumes: # Need to create the volume of the deploy 
+        - name: storage-host
+          hostPath:
+            path: /var/logs/main-server
+            type: DirectoryOrCreate

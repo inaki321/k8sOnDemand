@@ -28,25 +28,29 @@
 - EXTERNAL uses 80(http) and 443(https)
 - INTERNAL uses 31230 and 5000
 
-### `bash locallydeploy.sh` --> One example to expose, nodeport (can use clusterip the same way, just change type)
+## deploy LOCALLY /k8s only
+###  `bash locallydeploy.sh` --> One example to expose, nodeport (can use clusterip the same way, just change type)
 - **Nodeport** service (create)
     - Locally access to cluster app *selector: main-server*
 - NO need of ingress file, since it can be used locally by the service port
 - Adds *main-server.local* to */etc/hosts* to have a domain to access in local cluster too
 
+## deploy in CLOUD  /cloud
 ### `bash clouddeploy.sh` -->  Two examples to expose, ingress and loadbalancer
 - If running k8s in VM, you can skip loadbalancer, better use ingress
 
 - **Loadbalancer**, this is going to create a generic url to be accessed outside the cloud (locally needs to use microk8s metallb)
 - Ingress, selects a service to use for deploying by domain
-    - Need to create a certificate for https/tls, both work, CHOOSE ONE ONLY 
-        - k8s inside a  VM **("$)** <--> (search in ingress.yaml): uses tls 
-            - Enable 443 on network settings in case running a VM
+    - this is a way to do it by tls or ssl, ssl uses cloud certificate(like password key vault) and tls uses dns added url to show 2 options
+    - Need to create a certificate for https, both work TLS OR SSL, CHOOSE ONE ONLY 
+    - Enable ports 80 and 443 on network settings in case running a VM
+
+        - USE OF TLS **("$)** <--> (search in ingress.yaml): uses tls         
             - `sudo certbot certonly --manual --preferred-challenges dns -d domain-url.co`  -> creates .key and .cert
-                - Add information of certbot with dns zone, need to add domain to cloud service and sync information between
+            - Add information of certbot with dns zone, need to add domain to cloud service and sync information between
             - `kubectl create secret tls main-server-secret-tls --cert=path/to/tls.crt --key=path/to/tls.key` --> create tls to expose https
 
-        - Kubernetes Cloud Engine cloud service **("#)** <--> (search in ingress.yaml): uses https, this case is for GCP 
+        - USE OF SSL **("#)** <--> (search in ingress.yaml): uses https, this case is for GCP 
             - Create certificate on cloud 
             - Use that certificate created on the cloud in the same cloud 
             - Create certificate **managed-cert.yaml**
@@ -78,7 +82,7 @@ NAME                                TYPE            CLUSTER-IP       EXTERNAL-IP
 main-server-nodeport-service       NodePort       10.152.183.100       <none>       5000:31230/TCP   2m3s
 ```
 
-Eg.  `curl http://main-server.local:31230/login/user/engineer`  --> this is able because I setup the /etc/hosts and cluster is running locally
+Eg.  `curl http://main-server.local:31230/login/user/engineer`  --> this is able because I setup the /etc/hosts and cluster is running locally, no ingress need
 
 Eg.  `curl 10.152.183.100:5000/login/user/engineer`  
 
@@ -105,10 +109,3 @@ Eg.  `curl http://384bsf93ahsf-rkhw345.us-east-2.ebl.amazon.com:31230/login/user
 Eg.  `curl https://main-server.local:31230/login/user/engineer`  -> This is the ingress access 
 
 
-
-- FOR LOCAL exporting (not really used, since it is better cloud services )  --> To activate external ips locally
-    - Check network range 
-        - ipconfig --> Wireless LAN adapter Wi-Fi: ipv4 --> 192.168.100.50 # my pc ip 
-        - nmap -sn 192.168.100.0/24 --> checks my used addresses
-        - Some unused examples are **my-ip.240-my-ip.250** <---> **192.168.1.240-192.168.1.250**
-        - `microk8s enable metallb`  used the unused ips 

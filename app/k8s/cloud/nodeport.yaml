@@ -11,12 +11,12 @@ spec:
   selector:
     app: main-server
   ports:
-    - name: locally-app-port
-      protocol: TCP
-      port: 5000
+    - name: http-nodeport-service
+      port: 80
       targetPort: 5000
-      nodePort: 31230
+    - name: http-nodeport-service
+      protocol: TCP
+      port: 443
+      targetPort: 5000
   type: NodePort
-  clusterIP: 10.152.183.100 #static ip to always get the same clusterip, can skip on cloud services or if no need of static ips
-
 
