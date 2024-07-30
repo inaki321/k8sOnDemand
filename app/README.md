@@ -25,8 +25,8 @@
 
 ### nodeport.yaml 
 - Creates a nodeport service for both, deploy EXTERNAL and INTERNAL
-- EXTERNAL uses 80(http) and 443(https)
-- INTERNAL uses 31230 and 5000
+- CLOUD uses 80(http) and 443(https) for the same app
+- LOCALLY uses 31230 and 5000
 
 ## deploy LOCALLY /k8s only
 ###  `bash locallydeploy.sh` --> One example to expose, nodeport (can use clusterip the same way, just change type)
