@@ -5,7 +5,7 @@ metadata:
   name: main-server-ingress-service
   annotations:
     ingressClassName: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "main-server-ip" #static ip to always get the same clusterip
+    kubernetes.io/ingress.global-static-ip-name: "main-server-ip" #static ip to always get the same clusterip, reuse static ip
 
     ## "$ "$ "$ "$  
     ### "$ THIS PART IS FOR SSL HTTPS CERTIFICATE, IN CASE YOU ARE EXPOSING BY KUBERNETES CLOUD PROVIDER ENGINE

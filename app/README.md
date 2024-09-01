@@ -38,6 +38,7 @@
 ## deploy in CLOUD  /cloud
 ### `bash clouddeploy.sh` -->  Two examples to expose, ingress and loadbalancer
 - If running k8s in VM, you can skip loadbalancer, better use ingress
+- gcloud compute addresses create main-server-ip --global -> this is to setup a static ip, no needed always, only if needed one
 
 - **Loadbalancer**, this is going to create a generic url to be accessed outside the cloud (locally needs to use microk8s metallb)
 - Ingress, selects a service to use for deploying by domain
