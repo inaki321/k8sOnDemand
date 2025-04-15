@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: main-server
+  namespace: tests
 spec:
   replicas: 1
   selector:
@@ -14,7 +15,8 @@ spec:
     spec:
       containers:
       - name: main-server
-        image: localhost:32000/main-server
+        image: inaki99/simple-deploy-arm64:latest # public hub
+        # image: localhost:32000/main-server # local registry 
         ports:
         - containerPort: 5000
         env:
