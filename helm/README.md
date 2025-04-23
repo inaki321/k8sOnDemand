@@ -1,89 +1,105 @@
 # Helm chart
 
-### need to add 127.0.0.1 main-server.local to /etc/hosts to run
-- we call main-server.local, that is why we define that domain
-- We don't call orchestrator or microservices directly, they comunicate using clusterIP between main-server <--> orchestrator <--> microservices
-- Added in helmdeploy.sh
-
-### Docker images available
-Need my images available, this case uses the images locally pushed
-- For local: checks if docker/registry service is up, if not starts the services
-
-## Run project USING HELM (not like "simple k8s deploy" hehe)
-### my helm chart is /ondemandchart
-
-- Create helm package to export (optionally, no need of this )
-creates tar file to export it to any cloud, in helm/ondemandchart
-   ```
-   cd ondemandchart
-   microk8s helm package .
-   ```
-
-### helmdeploy.sh --> only need to run this to deploy
-- Deletes all k8s services, deploys etc.
-- adds main-server.local to /etc/hosts --> this is the only domain I call
-   - that is why I setted up that domain
-   - I can call cluster ip too `curl 10.152.183.100:5000` or `curl main-server.local:31230`
-
-   - Pods/services communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP
-
-- Creates or updates the helm chart with changes made in my chart
-- shows all the pods created when deploy:
-   ```
-   ------PODS------
-   NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES
-   main-server-8495669c8c-lpvlz    1/1     Running   0          2s    10.1.131.163   tr-2gx5vl3   <none>           <none>
-   microservice-0                  1/1     Running   0          2s    10.1.131.156   tr-2gx5vl3   <none>           <none>
-   microservice-1                  1/1     Running   0          1s    10.1.131.152   tr-2gx5vl3   <none>           <none>
-   orchestrator-66dbcb99b5-lqkzj   1/1     Running   0          2s    10.1.131.153   tr-2gx5vl3   <none>           <none>
-   ```
-
-- Shows all the services created when deploy:
-Eg.
-   ```
-   ------SERVICES------
-   NAME                            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE    SELECTOR
-   kubernetes                      ClusterIP   10.152.183.1     <none>        443/TCP          6d1h   <none>
-   main-server-nodeport-service    NodePort    10.152.183.100   <none>        5000:31230/TCP   4s     app=main-server
-   microservice                    ClusterIP   None             <none>        5983/TCP         4s     app=microservice
-   orchestrator-nodeport-service   NodePort    10.152.183.101   <none>        5045:31231/TCP   4s     app=orchestrator
-   ```
-
-- Ways I can call main-server:
-   - `curl  10.152.183.100:5000`
-   - `curl  main-server.local:31230`
-   - `curl  10.1.131.163:5000` dynamic because its pod ip
-
-Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it
-
-Should run like this [code run](../codeHelpers/results/README.md) to test it
-
-Deployment diagram [diagram](../codeHelpers/README.md) 
 
 ## /ondemandchart
-
-
-- `ondemandchart/app` & `ondemandchart/orchestrator` & `ondemandchart/microservices`
-     - These files use the values from `values.yaml` instead of *harcoded* values
 
 ```
 ondemandchart/
    ├── Chart.yaml
    ├── values.yaml
-   ├── templates/
-   │   ├── app/
-   │   │   ├── ingress.yaml --> sets main-server.local to be accesed
-   │   │   ├── deployment.yaml --> creates deployment for docker image
-   │   │   ├── service.yaml --> deploys clusterip service with staticIP 
-   │   ├── orchestrator/
-   │   │   ├── ingress.yaml --> sets main-server.local to be accesed (unused, because it is accesed by clusterip)
-   │   │   ├── deployment.yaml --> creates deployment for docker image
-   │   │   ├── service.yaml --> deploys clusterip service with staticIP (to be accessed always by main-server)
-   │   ├── microservices/ 
+   ├── TEMPLATES/
+   │   ├── APP/
+   │   │   ├── ingress.yaml --> sets domain -> routes to app services-pods
+   │   │   ├── deployment.yaml --> creates pods with template/app labels  for app image 
+   │   │   ├── service.yaml --> deploys nodeport service with static ClusterIP
+   │   │
+   │   ├── ORCHESTRATOR/
+   │   │   ├── ingress.yaml --> sets domain -> routes to orchestrator services-pods
+   │   │   ├── deployment.yaml --> creates pods with template/orchestrator labels for orchestrator                   
+                                    image 
+   │   │   ├── service.yaml --> deploys nodeport service with static ClusterIP
+   │   │
+   │   ├── MICROSERVICES/ 
    │   │   ├── statefulstate.yaml --> variables ip, because it is can have multiple microservices (replicates)
+                                          creates pods with template/microservices labels for 
+                                           microservices image 
+   │
    └──────────────────────────────
 ```
 
------------------------------
+
+# Docker images available
+ ** In **../docker** -> images pushed to docker hub
+
+* Need my images available, this case uses the images locally pushed
+
+   - For local usage (optional): c
+      - need local registry in local docker daemon (need daemon running)
+
+# Package helm chart (optional)
+```
+cd ondemandchart
+microk8s helm package .
+```
+
+# ondemandDeploy.sh 
+
+## **Commands to deploy the project**
 
 
+***Steps*** 
+
+1. (optional) set context in kube config to use specific cluster 
+
+2. Create namespace if needed, uninstall helm package if needed
+   - `bash ondemandDeploy.sh delete-res=true`
+
+3. (optional) add needed domains to etc/hosts to use domains for testing (optional)
+   - `curl main-server.local:31230` 
+
+4. helm lint -> check helm chart syntax working fine
+
+5. just deploy helm chart by installing or upgrading
+
+6. print output of the helm release
+
+
+# how to call pods 
+
+## 4 ways to access 
+
+### Access outside the cluster (from any terminal)
+
+- Nodeport
+   - `kubectl get nodes -o wide` -> use the  INTERNAL-IP node used by my service
+      - `<nodePort> : <serviceNodePort>` =~= `192.168.64.18:31230`
+
+- Ingress 
+   - Add ingress controller ip or NodeIP to DNS zones or Route 53 etc as "A record"
+   - local test -> Add ingress controller ip or NodeIP to /etc/hosts and domain 
+      ```
+      127.0.0.1 main-server.local
+      192.168.64.18 main-orchestrator.local
+      ```
+
+   - `<ingresspath-route>:<serviceNodePort>`  `main-server.local:31230`
+
+   - you can use 8080 or 443 changing the ports (check this )
+
+### Access inside the cluster (inside a pod)
+
+- ClusterIP
+   - `kubectl get pods -o wide` -> use CLUSTER-IP  
+      - `<clusterIP>:<containerimagePort>` =~= `10.1.254.99:5045`
+
+- ClusterDNS
+   - use the service name `service.metadata.name`
+      - `<service.metadata.name><containerimagePort>` =~= `orchestrator-container-nodeport-service:5045`
+
+
+# Testing helpers
+Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it
+
+Should run like this [code run](../codeHelpers/results/README.md) to test it
+
+Deployment diagram [diagram](../codeHelpers/README.md) 

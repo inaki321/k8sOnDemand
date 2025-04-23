@@ -10,9 +10,9 @@ spec:
   selector:
     app: {{ .Values.orchestrator.name }} # select pods with this labels -> deployment create pods with this template.app
   ports:
-  - protocol: TCP
-    port: {{ .Values.orchestrator.port }} # export port
-    targetPort: {{ .Values.orchestrator.port }} #app port
-    nodePort: {{ .Values.orchestrator.nodePort }} # export port
+    - protocol: TCP
+      port: {{ .Values.orchestrator.port }} # <clusterIP>:<port>
+      targetPort: {{ .Values.orchestrator.port }} # application port -> redirect this port to <clusterIP>:<port> and <NodeIP>:<port>
+      nodePort: {{ .Values.orchestrator.nodePort }} # <NodeIP>:<port>
   clusterIP: {{ .Values.orchestrator.staticIP }}
   type: NodePort
