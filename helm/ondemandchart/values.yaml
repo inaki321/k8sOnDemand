@@ -29,10 +29,3 @@ orchestrator:
   port: 5045
   staticIP: 10.152.183.101
   nodePort: 31231
-
-  # curl 
-
-
-# DESDE DENTRO DE UN POD curl 10.1.254.99:5045 O orchestrator-container-nodeport-service:5045 (clusterDNS communication)
-# DESDE AFUERA POR EL NODE PORT 
-# DESDE INGRESS IGUAL ANOTAR ETC HOSTS NODE PORT Y ROUTE

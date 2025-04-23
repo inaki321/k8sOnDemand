@@ -66,36 +66,46 @@ microk8s helm package .
 
 # how to call pods 
 
-## 4 ways to access 
+## Access outside the cluster (Eg. from any terminal) 2
 
-### Access outside the cluster (from any terminal)
-
-- Nodeport
+- **Nodeport** ------------
    - `kubectl get nodes -o wide` -> use the  INTERNAL-IP node used by my service
-      - `<nodePort> : <serviceNodePort>` =~= `192.168.64.18:31230`
+      - `<nodePort> : <serviceNodePort>` =~= `curl 192.168.64.18:31230`
 
-- Ingress 
-   - Add ingress controller ip or NodeIP to DNS zones or Route 53 etc as "A record"
-   - local test -> Add ingress controller ip or NodeIP to /etc/hosts and domain 
+--------
+
+- **Ingress** ------------
+   - cloud : DNS zones or Route 53 etc as "A record"
+      - depending on Loadbalancer
+         - add ingress IP  `kubectl get ingress -n ingress -o wide`
+         - add NODE IP or VM IP`kubectl get nodes -o wide`
+   
+   - local test -> Add to etc/hosts 
+         - add ingress IP  `kubectl get ingress -n ingress -o wide`
+         - add NODE IP or VM IP `kubectl get nodes -o wide`
       ```
-      127.0.0.1 main-server.local
-      192.168.64.18 main-orchestrator.local
+      192.92.23.2 pedros.tortilla # not local IP 127.0.0.1 (use node or ingress IP)
       ```
 
-   - `<ingresspath-route>:<serviceNodePort>`  `main-server.local:31230`
+   - `<ingresspath-route>` =~= `curl http://main-server.local`
 
-   - you can use 8080 or 443 changing the ports (check this )
+   - you can add 443 and 80, if you add to values Values.serverCert (certificate secret), it is going to add TLS/HTTPS
 
-### Access inside the cluster (inside a pod)
+--------
 
-- ClusterIP
+## ONLY Access inside the cluster (Eg. inside a pod) 2
+
+- **ClusterIP** ------------
    - `kubectl get pods -o wide` -> use CLUSTER-IP  
-      - `<clusterIP>:<containerimagePort>` =~= `10.1.254.99:5045`
+      - `<clusterIP>:<containerimagePort>` =~= `curl 10.1.254.99:5045`
 
-- ClusterDNS
+--------
+
+- **ClusterDNS** ------------
    - use the service name `service.metadata.name`
-      - `<service.metadata.name><containerimagePort>` =~= `orchestrator-container-nodeport-service:5045`
+      - `<service.metadata.name>:<containerimagePort>` =~= `curl orchestrator-container-nodeport-service:5045`
 
+--------
 
 # Testing helpers
 Once deployed I can use [testing api](../codeHelpers/loginmainserver.py) to test it

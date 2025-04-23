@@ -24,9 +24,11 @@ fi
 
 
 #--------------------------- Add domain to etc/hosts ---------------------------
-#set localhost  in /etc/hosts for main-server-local
-sudo sed -i.bak '/main-server.local/d' /etc/hosts
-echo "127.0.0.1 main-server.local" | sudo tee -a /etc/hosts
+# only add main server domain (it is the one I am calling from fetch)
+#(optional since it added to etc hosts )
+# use NODE IP or VM IP
+#sudo sed -i.bak '/main-server.local/d' /etc/hosts
+#echo "192.168.64.18 main-server.local" | sudo tee -a /etc/hosts
 
 
 
@@ -74,22 +76,14 @@ sleep 2
 
 echo "--------------------------------------------------ondemand release chart ----------------- "
 
-echo "Now you can call main-server by its domain and its static ip..."
+echo "Now you can call main-server by its NodePort IP or Ingress Domain"
 echo " "
-echo "curl http://main-server.local:31230"
+echo "curl http://app-container.local"
 echo " "
-echo "curl http://10.152.183.100:5000" 
-
-echo " "
-echo "Now you can call orchestrator.local by its domain and its static ip..."
-echo " "
-echo "curl http://orchestrator.local:31231"
-echo " "
-echo "curl http://10.152.183.101:5045" 
-echo " "
-
-echo "Now you can call microservices by its dynamic ip..."
-
-
-echo "Pods communicate between them using SERVICE-ClusterIP or POD-IP, but we can call them by its domain, SERVICE-ClusterIP or POD-IP"
-
+echo "curl 192.168.64.18:31230" 
+echo " " 
+echo "You can also call orchestrator by its NodePort or Ingress Domain..."
+echo " " 
+echo "Microservices pods does not have external IP, just internal..."
+echo " " 
+echo "Pods are going to call between them by their ClusterIP or ClusterDNS (serviceNameDNS)"

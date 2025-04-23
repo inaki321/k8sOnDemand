@@ -6,14 +6,25 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx # for nginx ingress controller
   rules:
-  - host: {{ .Values.app.name }}.local
+  - host: {{ .Values.app.name }}.local #  app-container.local (domain)
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.app.name }}-service
+            name: {{ .Values.app.name }}-nodeport-service # my service name - service grabbing app pods (need to use service IP)
             port:
-              number: {{ .Values.app.port }}
+              number: {{ .Values.app.port }} # port my container app is running on 5000
+
+# ADD tls for encrypted traffic HTTPS
+
+# if there is a certificate, then use the secret where the certificate lives
+{{- if ne .Values.serverCert "" }}
+tls:
+  - hosts:
+    - "{{ .Values.app.name }}.local"
+    secretName: "{{.Values.serverCert}}"
+{{- end }}
