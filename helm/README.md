@@ -78,7 +78,7 @@ microk8s helm package .
    - cloud : DNS zones or Route 53 etc as "A record"
       - depending on Loadbalancer
          - add ingress IP  `kubectl get ingress -n ingress -o wide`
-         - add NODE IP or VM IP`kubectl get nodes -o wide`
+         - add NODE IP or VM IP `kubectl get nodes -o wide`
    
    - local test -> Add to etc/hosts 
          - add ingress IP  `kubectl get ingress -n ingress -o wide`

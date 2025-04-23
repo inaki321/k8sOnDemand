@@ -68,22 +68,30 @@ sleep 2
 
 echo "--------------------PODS--------------------"
 kubectl get pods -o wide -l identifier=k8sondemand -n ondemand
-
+echo " "
 echo "--------------------SERVICES--------------------"
 kubectl get services -o wide -l identifier=k8sondemand -n ondemand
-
+echo " "
+echo "--------------------INGRESS from app--------------------"
+kubectl get ingress -n ondemand
+echo " "
+echo "--------------------IF INGRESS LIVING IN 127.0.0.1 OR LOCALHOST, USE NODE IP as endpoint (/etc/hosts or DNS ZONE)--------------------"
+kubectl get nodes -o wide
+echo " "
 sleep 2
 
 echo "--------------------------------------------------ondemand release chart ----------------- "
 
-echo "Now you can call main-server by its NodePort IP or Ingress Domain"
+echo "Externally you can call main server by its NodePort IP or Ingress Domain"
 echo " "
 echo "curl http://app-container.local"
 echo " "
 echo "curl 192.168.64.18:31230" 
 echo " " 
-echo "You can also call orchestrator by its NodePort or Ingress Domain..."
+echo "Externally you call orchestrator by its NodePort or Ingress Domain..."
 echo " " 
-echo "Microservices pods does not have external IP, just internal..."
+echo "Microservices deployment pods does not have external IP, just internal..."
 echo " " 
-echo "Pods are going to call between them by their ClusterIP or ClusterDNS (serviceNameDNS)"
+echo "Pods are going to call between them by their ClusterIP or ClusterDNS (serviceNameDNS) because they live inside the same Cluster"
+echo " "
+echo "Outside the cluster, pods can just call externalIP or domain pods or domains, NO clusterIP or clusterDNS"
