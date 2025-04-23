@@ -1,30 +1,16 @@
 # Helm chart
 
-##  The project can be run like in [simple k8s deploy](../README.md)  or USING HELM
-- simple k8s deploy is without helm, you have to run `kubectl apply -f file.yaml` for every k8s resource you want to deploy 
-- We need to run deploy.sh for each folder of `<service>/k8s` to start each service (app, orchestrator and microservices) using k8s
-
-
-THIS PROJECT DEPLOYS LOCALLY, WE CAN USE 
-
-### [USES MICROK8S](../microk8sandversions/README.md) 
-
 ### need to add 127.0.0.1 main-server.local to /etc/hosts to run
 - we call main-server.local, that is why we define that domain
 - We don't call orchestrator or microservices directly, they comunicate using clusterIP between main-server <--> orchestrator <--> microservices
 - Added in helmdeploy.sh
 
-### Need docker images
+### Docker images available
 Need my images available, this case uses the images locally pushed
-`bash dockerImgs/pushimages.sh `
-
-- checks if service is up, if not starts the services
-- pushes the images to docker
+- For local: checks if docker/registry service is up, if not starts the services
 
 ## Run project USING HELM (not like "simple k8s deploy" hehe)
 ### my helm chart is /ondemandchart
-- Create helm project, init project, (run only to create the template, skip because there is already a helm template)
-`microk8s helm create ondemandchart`
 
 - Create helm package to export (optionally, no need of this )
 creates tar file to export it to any cloud, in helm/ondemandchart
@@ -78,7 +64,6 @@ Deployment diagram [diagram](../codeHelpers/README.md)
 
 
 - `ondemandchart/app` & `ondemandchart/orchestrator` & `ondemandchart/microservices`
-     - has the same files as `app/k8s/` & `orchestrator/k8s/` & `microservices/k8s/`
      - These files use the values from `values.yaml` instead of *harcoded* values
 
 ```
@@ -100,67 +85,5 @@ ondemandchart/
 ```
 
 -----------------------------
-
-### deleteHelmResources.sh
-
-Deletes all helm and k8s services 
-
-----------------------
-
-### grafana prometheus
-
-This creates the prometheus-grafana server, already in helmdeploy.sh
-
-Grafana and prometheus pods, services are on --namespace monitoring 
-
-grafana and prometeus values to use are in /grafanaprometheus/values.yaml
-
-```
-# add charts 
-microk8s helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-microk8s helm repo add grafana https://grafana.github.io/helm-charts
-
-# helm update data
-microk8s helm repo update
-
-# install in case not installed, if not update 
-microk8s helm install prometheus prometheus-community/prometheus
-microk8s helm install grafana grafana/grafana
-
-
-# Access to grafana and prometheus using localhost for :9000 and :3000 
-microk8s kubectl port-forward service/prometheus-server 9090:80
-microk8s kubectl port-forward service/grafana 3000:80
-
-# modify helm values if needed 
-
-helm show values prometheus-community/prometheus > prometheus-values.yaml
-helm show values grafana/grafana > grafana-values.yaml
-
-# Edit prometheus-values.yaml and grafana-values.yaml as needed
-
-helm install prometheus prometheus-community/prometheus -f prometheus-values.yaml
-helm install grafana grafana/grafana -f grafana-values.yaml
-
-```
-
-Export service once deployed  to access by localhost:5055
-
-
-user: admin
-pass: admin
-
-### Data sources
-My services I want to use 
-Home --> Connections --> Data sources
-
-#### Import dashboards
-Dashboards templates 
-https://grafana.com/grafana/dashboards/ 
-
-Copy Id clipboard from grafana dashboards and paste it in my "import dashboard"
-
-Home --> Dashboards --> Import dashboard
-
 
 

@@ -6,34 +6,17 @@
 
 
 ## in /app/
-- Need to create docker image, and push it to my local docker
-    - IMAGE NAME : localhost:32000/main-server
-    - Run `bash dockerImg.sh`
-    - my registry host is localhost:32000, *it can be the url of my docker image*
+- Need to create docker image and push it
+    - IMAGE NAME : localhost:32000/main-server (use local registry) or inaki99/simple-deploy-arm64 (personal docker hub)
+    - Run `bash imagePush.sh`
 
 
-## in /app/k8s 
-- Run using ONLY k8s 
-- Static ip on nodeport or clusterip to always call the same one, if not every deploy changes (this case not needed new addresses)
+## check deploy
 - Check deploy   `microk8s kubectl get deployments`
 - Check service `microk8s kubectl get services -l app=main-server`
 - Check pods `microk8s kubectl get pods -l app=main-server`
 
-### Both deploy.sh files
-- Deletes previous deployment and nodeport service
-- Creates deployment, pod with 1 replica, with env variables, storage and app running in 5000
-
-### nodeport.yaml 
-- Creates a nodeport service for both, deploy EXTERNAL and INTERNAL
-- CLOUD uses 80(http) and 443(https) for the same app
-- LOCALLY uses 31230 and 5000
-
-## deploy LOCALLY /k8s only
-###  `bash locallydeploy.sh` --> One example to expose, nodeport (can use clusterip the same way, just change type)
-- **Nodeport** service (create)
-    - Locally access to cluster app *selector: main-server*
-- NO need of ingress file, since it can be used locally by the service port
-- Adds *main-server.local* to */etc/hosts* to have a domain to access in local cluster too
+### uses clusterIP to be accesed
 
 ## deploy in CLOUD  /cloud
 ### `bash clouddeploy.sh` -->  Two examples to expose, ingress and loadbalancer

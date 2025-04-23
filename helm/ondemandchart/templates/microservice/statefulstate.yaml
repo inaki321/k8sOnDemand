@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.microservice.name }}
+  namespace: {{ .Values.namespaceprod }}
 spec:
   serviceName: "{{ .Values.microservice.name }}"
   replicas: 2 # Number of replicas
@@ -21,7 +22,8 @@ spec:
     spec:
       containers:
       - name: {{ .Values.microservice.name }}-container
-        image: {{ .Values.image.address }}/{{ .Values.microservice.container }}
+        #image: inaki99/microservice-arm64:latest
+        image: {{ .Values.registry }}/{{ .Values.microservice.image }}-{{ .Values.imagearchitecture }}:{{ .Values.microservice.tag }}
         ports:
         - containerPort: {{ .Values.microservice.port }}
 

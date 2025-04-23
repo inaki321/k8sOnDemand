@@ -1,17 +1,14 @@
-#.Values.app.name == main-server
-# .Values.app.port == 5000
-# .Values.image.address == localhost:32000
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app.name }}
+  namespace: {{ .Values.namespaceprod }}
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ .Values.app.name }}
-  template:
+  template: # creates pods with this metadata template
     metadata:
       labels:
         app: {{ .Values.app.name }}
@@ -19,7 +16,8 @@ spec:
     spec:
       containers:
       - name: {{ .Values.app.name }}
-        image: {{ .Values.image.address }}/{{ .Values.app.container }}
+        #image: inaki99/app-arm64:latest
+        image: {{ .Values.registry }}/{{ .Values.app.image }}-{{ .Values.imagearchitecture }}:{{ .Values.app.tag }}
         ports:
         - containerPort: {{ .Values.app.port }}
         env:
