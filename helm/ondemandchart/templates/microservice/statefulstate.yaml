@@ -24,6 +24,7 @@ spec:
       - name: {{ .Values.microservice.name }}-container
         #image: inaki99/microservice-arm64:latest
         image: {{ .Values.registry }}/{{ .Values.microservice.image }}-{{ .Values.imagearchitecture }}:{{ .Values.microservice.tag }}
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.microservice.port }}
 

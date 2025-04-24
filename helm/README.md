@@ -23,6 +23,8 @@ ondemandchart/
    │   │   ├── statefulstate.yaml --> variables ip, because it is can have multiple microservices (replicates)
                                           creates pods with template/microservices labels for 
                                            microservices image 
+
+                                             Microservices are stateless application but for learning purposes I used statefulset 
    │
    └──────────────────────────────
 ```

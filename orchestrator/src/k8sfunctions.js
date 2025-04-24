@@ -116,9 +116,9 @@ export const getStatefulDeployments = async (kc, namespace) => {
     const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
 
     const statefulService = {};
-    console.log('Getting stateful deployments: ')
+    console.log('Polling stateful deployments: ')
     try {
-        const res = await k8sApi.listStatefulSetForAllNamespaces();
+        const res = await k8sApi.listStatefulSetForAllNamespaces(namespace); // get only namespaced ones 
         const statefulSets = res.body.items;
         statefulSets.forEach((statefulSet) => {
             statefulService[statefulSet.metadata.name] = {
@@ -148,4 +148,19 @@ export const replicateMoreServices = async (kc, namespace, statefulDeploys) => {
     } catch (e) {
         console.log('ERROR scaling more pods ', e);
     }
+}
+
+
+// KUBERNETES CONTEXT CLUSTER 
+export const connectToCluster = async () => {
+    let kc = new k8s.KubeConfig();
+    try {
+        // try local kube config 
+        const kubeConfigPath = '/Users/super/.kube/config';
+        kc.loadFromFile(kubeConfigPath);
+    } catch (e) {
+        // try loading directly config file from cluster
+        kc.loadFromCluster();
+    }
+    return kc;
 }

@@ -18,5 +18,6 @@ spec:
       - name: {{ .Values.orchestrator.name }}
         #image: inaki99/microservice-arm64:latest
         image: {{ .Values.registry }}/{{ .Values.orchestrator.image }}-{{ .Values.imagearchitecture }}:{{ .Values.orchestrator.tag }}
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.orchestrator.port }}

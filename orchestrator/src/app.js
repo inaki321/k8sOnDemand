@@ -1,10 +1,11 @@
-import { assingLabeltoPod, getAvailablePods, getGroupPod, getStatefulDeployments, replicateMoreServices } from './k8sfunctions.js';
+import { assingLabeltoPod, connectToCluster, getAvailablePods, getGroupPod, getStatefulDeployments, replicateMoreServices } from './k8sfunctions.js';
 //this library directly grabs the gcloud configuration in your machine 
 import k8s from '@kubernetes/client-node';
 import express from 'express'
 import fetch from 'node-fetch';
 import promClient from 'prom-client';
 
+const namespace = 'ondemand'; // could be improved by sending it by request
 const app = express();
 app.use(express.json());
 
@@ -34,9 +35,8 @@ app.get('/', async (req, res) => {
 app.post('/assign-pod', async (req, res) => {
     const group = req.body.group;
     console.log('assign-pod called with group: ', group)
-    const kc = new k8s.KubeConfig();
-    kc.loadFromDefault();
-    const namespace = 'default';
+    // get k8s cluster kubectl
+    const kc = await connectToCluster();
 
     let groupPod = await getGroupPod(kc, namespace, group);
     if (Object.keys(groupPod).length > 0) {
@@ -56,6 +56,7 @@ app.post('/assign-pod', async (req, res) => {
         console.log('pod assigned ', assignStatus);
         console.log('Initializing server with url ', `http://${assignStatus.podIP}:5983/initServer`);
         try {
+            // need to call specific pod, that is why I use ClusterIP
             const res = await fetch(`http://${assignStatus.podIP}:5983/initServer`, {
                 method: 'POST',
                 headers: {
@@ -84,14 +85,13 @@ async function checkAndScale() {
     mkdir -p ~/.kube
     export KUBECONFIG=~/.kube/config --> this is for const kc = new k8s.KubeConfig();
     */
-    const kc = new k8s.KubeConfig();
-    kc.loadFromDefault();
-    //kc.clusters[0].server = 'http://172.28.210.205:16443'; //this works with k8s api, from cloud
-    const namespace = 'default'; // Replace 'default' with your namespace if needed
 
+    // get k8s cluster kubectl
+    const kc = await connectToCluster();
 
     const statefulDeployment = await getStatefulDeployments(kc, namespace);
-    if (!Object.keys(statefulDeployment).includes('microservice')) return; // return in case there is no deployment 
+    // check for my statefulset microservices 
+    if (!Object.keys(statefulDeployment).includes('microservice-container')) return; // return in case there is no deployment 
     console.log(statefulDeployment)
 
     const availablePods = await getAvailablePods(kc, namespace);

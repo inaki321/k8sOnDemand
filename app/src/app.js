@@ -43,13 +43,18 @@ app.get('/login/user/:user', async (req, res) => {
     console.log('Calling orchestrator to see which pod user needs');
     let podUrl = undefined;
     try {
+
+        const url = 'http://orchestrator-container-nodeport-service:5045/assign-pod';
         // if app running using npm http:localhost:5045
         //const res = await fetch('http://orchestrator.local/assign-pod', {
-        console.log('Calling http://10.152.183.101:5045/assign-pod')
+        console.log('Calling orchestrator by its ClusterDNS: orchestrator-container-nodeport-service:5045')
+        console.log('You can also call it by its pods IP http://10.152.183.101:5045/assign-pod')
+
+        console.log('CALLING ORCHESTRATOR BY : ', url)
         console.log('with params: ', JSON.stringify({ 'group': foundGroup }));
-        //const res = await fetch('http://orchestrator.local:31231/assign-pod', {       
-        //cant call orchestrator.local because it is not on cloud cluster , everything locally needs cluster ip
-        const res = await fetch('http://10.152.183.101:5045/assign-pod', {
+        const res = await fetch(url, { // clusterDNS call
+
+        //const res = await fetch('http://192.168.64.18:31230/assign-pod', { // nodeport call 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -57,8 +62,8 @@ app.get('/login/user/:user', async (req, res) => {
             body: JSON.stringify({ 'group': foundGroup })
         });
 
-        console.log('status: ', res.status)
-        console.log('text: ', res.statusText)
+        console.log('Response.status: ', res.status)
+        console.log('Response.text: ', res.statusText)
         podUrl = await res.json();
         console.log(podUrl)
 

@@ -18,6 +18,7 @@ spec:
       - name: {{ .Values.app.name }}
         #image: inaki99/app-arm64:latest
         image: {{ .Values.registry }}/{{ .Values.app.image }}-{{ .Values.imagearchitecture }}:{{ .Values.app.tag }}
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.app.port }}
         env:
